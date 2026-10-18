@@ -1,0 +1,1220 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#141414">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Maratón">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<title>Maratón</title>
+<script src="config.js"></script>
+<style>
+:root{--bg:#141414;--bg2:#1c1c1c;--bg3:#2a2a2a;--bg4:#363636;--line:#2f2f2f;--tx:#fff;--tx2:#c4c4c4;--tx3:#8c8c8c;--red:#e50914;--red2:#b20710;--ok:#46d369;--gold:#f5c518;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141414}}
+:root[data-theme="dark"]{--bg:#141414}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.4}
+body{min-height:100vh;padding-bottom:calc(74px + env(safe-area-inset-bottom));overflow-x:hidden}
+body.noscroll{overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:var(--tx);background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:10px 12px;outline:none;max-width:100%}
+input:focus,select:focus,textarea:focus{border-color:#666}
+textarea{width:100%;resize:vertical}
+.hidden{display:none!important}
+.muted{color:var(--tx3)}.small{font-size:13px}.center{text-align:center}
+.pad{padding:0 16px}
+main{max-width:1200px;margin:0 auto}
+/* cabecera */
+header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:6px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:linear-gradient(180deg,rgba(20,20,20,.98) 55%,rgba(20,20,20,0))}
+.logo{color:var(--red);font-weight:900;font-size:24px;letter-spacing:-.5px;text-transform:uppercase;cursor:pointer;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.logo.big{font-size:40px}
+.sp{flex:1}
+.ib{background:none;border:0;font-size:20px;width:40px;height:40px;border-radius:50%}
+.ib:active{background:var(--bg3)}
+.av{display:inline-flex;align-items:center;justify-content:center;border-radius:6px;border:0;flex:0 0 auto}
+.av.sm{width:32px;height:32px;font-size:18px;margin-left:4px}
+.av.xs{width:28px;height:28px;font-size:16px;border-radius:5px}
+.av.lg{width:96px;height:96px;font-size:52px;border-radius:10px}
+.av.xl{width:110px;height:110px;font-size:60px;border-radius:12px;margin:10px auto}
+/* navegación */
+nav.tabs{position:fixed;bottom:0;left:0;right:0;display:flex;background:rgba(18,18,18,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid #222;padding-bottom:env(safe-area-inset-bottom);z-index:30}
+nav.tabs button{flex:1;background:none;border:0;color:var(--tx3);padding:8px 0 7px;font-size:10.5px;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+nav.tabs button.on{color:#fff}
+nav.tabs .ic{font-size:21px;line-height:1;filter:grayscale(1) brightness(.85)}
+nav.tabs button.on .ic{filter:none}
+nav.tabs .add .ic{background:var(--red);color:#fff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:22px;filter:none;margin-top:-4px}
+.badge{position:absolute;top:4px;left:calc(50% + 6px);background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:9px;padding:1px 5px;min-width:16px}
+/* botones */
+.btn{border:0;border-radius:6px;padding:10px 16px;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.red{background:var(--red);color:#fff}.btn.red:active{background:var(--red2)}
+.btn.white{background:#fff;color:#000}
+.btn.grey{background:rgba(109,109,110,.55);color:#fff}
+.btn.danger{background:none;border:1px solid #5a1a1d;color:#ff6b72;margin-top:22px}
+.btn.sm{padding:6px 11px;font-size:13px}
+.btn.big{padding:13px 18px;font-size:16px;flex:1}
+.btn.full{width:100%;margin-top:14px}
+.btn:disabled{opacity:.5}
+/* hero */
+.hero{position:relative;overflow:hidden;margin:-58px 0 8px;padding:calc(64px + env(safe-area-inset-top)) 16px 26px;min-height:340px;display:flex;align-items:flex-end}
+.hero-bg{position:absolute;inset:-30px;background:var(--bgimg,linear-gradient(135deg,#3a0a0c,#141414)) center/cover;filter:blur(26px) brightness(.42) saturate(1.2)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,20,20,0) 40%,var(--bg) 100%)}
+.hero-in{position:relative;z-index:1;display:flex;gap:16px;align-items:flex-end;width:100%;max-width:1200px;margin:0 auto}
+.hero-cover{width:132px;flex:0 0 auto;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.6);border-radius:6px}
+.hero-txt{min-width:0}
+.hero h1{font-size:26px;line-height:1.1;font-weight:800;margin:4px 0 6px}
+.kicker{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx2)}
+.meta{color:var(--tx2);font-size:13px}
+.hero-btns{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+/* filas y pósters */
+.row{margin:6px 0 20px}
+.row h2{font-size:17px;font-weight:700;padding:0 16px 8px;display:flex;align-items:baseline;gap:8px}
+.row h2 small{font-weight:400;color:var(--tx3);font-size:13px}
+.scroller{display:flex;gap:8px;overflow-x:auto;padding:0 16px 4px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.scroller::-webkit-scrollbar{display:none}
+.scroller .poster{width:112px;flex:0 0 auto;scroll-snap-align:start}
+.poster{position:relative;cursor:pointer;min-width:0}
+.poster:active{transform:scale(.97)}
+.img{aspect-ratio:2/3;border-radius:5px;background:#2a2a2a center/cover no-repeat;overflow:hidden;position:relative;width:100%}
+.sq .img{background-size:contain;background-color:#1e1e1e}
+.img.fb{display:flex;flex-direction:column;justify-content:flex-end;padding:9px;background-size:auto}
+.fbe{position:absolute;top:8px;right:8px;font-size:20px;opacity:.85}
+.fbt{font-weight:800;font-size:13px;line-height:1.15;text-shadow:0 1px 4px rgba(0,0,0,.6);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.tb{position:absolute;top:5px;left:5px;font-size:13px;background:rgba(0,0,0,.6);border-radius:4px;padding:1px 4px}
+.rt{position:absolute;bottom:8px;right:5px;font-size:11px;font-weight:700;background:rgba(0,0,0,.75);color:var(--gold);border-radius:4px;padding:1px 5px}
+.live{position:absolute;top:5px;right:5px;font-size:10px;font-weight:800;background:var(--red);border-radius:3px;padding:1px 5px;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.55}}
+.pb{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.25);border-radius:0 0 5px 5px;overflow:hidden}
+.pb i{display:block;height:100%;background:var(--red)}
+.pb.big{position:relative;height:6px;border-radius:3px;margin-top:10px}
+.cap{font-size:12px;color:var(--tx2);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cap2{font-size:11px;color:var(--tx3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:12px 8px;padding:4px 16px 20px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.scroller .poster{width:150px}.hero{min-height:420px}.hero-cover{width:190px}.hero h1{font-size:40px}}
+/* chips, buscador */
+.search{width:100%;background:var(--bg3);border:1px solid var(--line);padding:11px 14px;border-radius:8px;font-size:16px}
+.chips{display:flex;gap:7px;overflow-x:auto;padding:10px 16px 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:1px solid #555;background:transparent;border-radius:16px;padding:6px 12px;font-size:13px;color:var(--tx2);white-space:nowrap}
+.chip.on{background:#fff;color:#000;border-color:#fff;font-weight:700}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.filters select{padding:7px 10px;font-size:13px}
+.tog{display:inline-flex;gap:7px;align-items:center;font-size:14px;color:var(--tx2);cursor:pointer;user-select:none}
+.tog input{width:18px;height:18px;accent-color:var(--red)}
+.count{font-size:13px;color:var(--tx3);padding:10px 16px 0}
+h2.h{font-size:24px;font-weight:800;margin:6px 0 14px}
+/* añadir */
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(min-width:700px){.types{grid-template-columns:repeat(9,1fr)}}
+.tt{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 4px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--tx2)}
+.tt span{font-size:24px}
+.tt.on{border-color:var(--red);background:#2a1213;color:#fff}
+.sbar{display:flex;gap:8px;margin:14px 0 6px}
+.res{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.res .thumb{width:52px;flex:0 0 auto}
+.res .rt-txt{flex:1;min-width:0}
+.res b{display:block;font-size:15px;line-height:1.25}
+.res .sub{font-size:13px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.err{background:#2a1213;border:1px solid #5a1a1d;color:#ffb3b6;border-radius:8px;padding:12px;margin:10px 0;font-size:14px}
+.empty{text-align:center;padding:50px 24px;color:var(--tx3)}
+.empty .e{font-size:48px;margin-bottom:10px}
+.empty b{display:block;color:#fff;font-size:18px;margin-bottom:6px}
+.spinner{width:28px;height:28px;border:3px solid #444;border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;margin:24px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* modal */
+#modal{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.backdrop{position:absolute;inset:0;background:rgba(0,0,0,.72)}
+.sheet{position:relative;background:#181818;width:100%;max-width:760px;max-height:94vh;max-height:94dvh;overflow-y:auto;border-radius:14px 14px 0 0;padding-bottom:calc(24px + env(safe-area-inset-bottom));animation:up .22s ease-out;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+@media(min-width:760px){#modal{align-items:center}.sheet{border-radius:12px;max-height:90vh}}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+.x{position:sticky;top:10px;float:right;margin:10px 10px -46px 0;z-index:5;width:36px;height:36px;border-radius:50%;border:0;background:rgba(24,24,24,.85);font-size:16px}
+.dh{position:relative;overflow:hidden;padding:44px 16px 18px}
+.dh::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(24,24,24,0) 30%,#181818)}
+.dh-in{position:relative;z-index:1;display:flex;gap:14px;align-items:flex-end}
+.dcover{width:118px;flex:0 0 auto;box-shadow:0 8px 24px rgba(0,0,0,.6);border-radius:5px}
+.dh h1{font-size:22px;line-height:1.15;margin:3px 0 5px}
+.avg{color:var(--gold);font-weight:800;margin-top:6px;font-size:16px}
+.avg small{color:var(--tx3);font-weight:400;font-size:12px}
+.dbody{padding:4px 16px 10px}
+.dbody h3{font-size:13px;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx3);margin:22px 0 9px;font-weight:700}
+.tm{display:flex;gap:8px;margin-top:6px}
+.tclock{font-variant-numeric:tabular-nums}
+.manual{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.manual input{flex:1;min-width:110px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1px solid #444;background:var(--bg2);border-radius:18px;padding:7px 13px;font-size:14px;color:var(--tx2)}
+.seg button.on{background:#fff;color:#000;border-color:#fff;font-weight:700}
+.rate{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.rate button{border:1px solid #444;background:var(--bg2);border-radius:6px;padding:9px 0;font-weight:700;font-size:14px;color:var(--tx2)}
+.rate button.fill{background:#3b3209;border-color:#6b5a12;color:var(--gold)}
+.rate button.on{background:var(--gold);color:#000;border-color:var(--gold)}
+.prog{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--tx2)}
+.pn{width:80px;padding:8px 10px}.pn.s{width:62px}
+.dates{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.dates label{font-size:12px;color:var(--tx3);display:flex;flex-direction:column;gap:4px}
+.dates input{width:100%}
+.again{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:14px;color:var(--tx2)}
+.desc{color:var(--tx2);font-size:14px;white-space:pre-line;cursor:pointer}
+.clamp{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.gen{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.gen span{font-size:12px;background:var(--bg3);border-radius:4px;padding:3px 8px;color:var(--tx2)}
+.grp{display:flex;flex-direction:column;gap:8px}
+.gm{display:flex;gap:10px;align-items:center;font-size:14px}
+.gm b{min-width:60px}
+.gm .rt2{margin-left:auto;color:var(--gold);font-weight:700}
+.recb{display:flex;gap:6px;flex-wrap:wrap}
+.recin{background:#1f1a0a;border:1px solid #4a3d10;border-radius:8px;padding:9px 12px;font-size:14px;margin-top:10px}
+.cm{background:var(--bg2);border-radius:8px;padding:10px 12px;margin-bottom:8px;position:relative}
+.cm .ch{display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:5px}
+.cm .ct{font-size:14px;white-space:pre-line;word-break:break-word}
+.cm.spoiler .ct{filter:blur(7px);user-select:none}
+.cm.spoiler::after{content:"⚠️ Spoiler — toca para verlo";position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:13px;font-weight:700}
+.cm .del{margin-left:auto;background:none;border:0;color:var(--tx3);font-size:13px}
+.cform{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.cform .r{display:flex;justify-content:space-between;align-items:center}
+.inv{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.inv input{flex:1;min-width:150px}
+.prov{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.prov img{width:42px;height:42px;border-radius:9px}
+.prov .lbl{font-size:12px;color:var(--tx3);width:100%;margin-top:4px}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.links a{color:#fff;text-decoration:none;background:var(--bg3);border-radius:6px;padding:7px 11px;font-size:13px}
+details.edit{margin-top:24px;background:var(--bg2);border-radius:8px;padding:12px}
+details.edit summary{cursor:pointer;font-weight:700;color:var(--tx2)}
+.form{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.form label{font-size:12px;color:var(--tx3);display:flex;flex-direction:column;gap:4px}
+.mh{padding:22px 16px 6px}
+.mh h2{font-size:22px}
+/* actividad */
+.act{display:flex;gap:11px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.act .at{flex:1;font-size:14px;min-width:0;color:var(--tx2)}
+.act .at b{color:#fff}
+.act .ath{width:40px;flex:0 0 auto}
+/* stats */
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(min-width:700px){.cards{grid-template-columns:repeat(4,1fr)}}
+.card{background:var(--bg2);border-radius:10px;padding:14px}
+.card .n{font-size:26px;font-weight:800}
+.card .l{font-size:12px;color:var(--tx3)}
+.sec{background:var(--bg2);border-radius:10px;padding:14px;margin-top:12px}
+.sec h3{font-size:14px;margin-bottom:12px;color:var(--tx2)}
+.bar{display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;font-size:13px;margin-bottom:8px}
+.bar>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--tx2)}
+.bar>div{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--red);border-radius:5px}
+.bar b{font-size:12px;font-variant-numeric:tabular-nums}
+.days{display:flex;gap:4px;align-items:flex-end;height:90px}
+.days div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.days i{width:100%;background:var(--red);border-radius:3px 3px 0 0;min-height:2px}
+.days span{font-size:10px;color:var(--tx3)}
+table.gt{width:100%;border-collapse:collapse;font-size:13px}
+table.gt th{color:var(--tx3);font-weight:600;text-align:right;padding:6px 4px}
+table.gt th:first-child,table.gt td:first-child{text-align:left}
+table.gt td{padding:8px 4px;border-top:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+/* perfiles */
+.who{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 16px;text-align:center}
+.who h1{font-size:28px;font-weight:500;margin:26px 0 24px}
+.profiles{display:grid;grid-template-columns:repeat(2,auto);gap:22px 28px;justify-content:center}
+@media(min-width:600px){.profiles{grid-template-columns:repeat(4,auto)}}
+.prof{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:9px;color:var(--tx3);font-size:15px}
+.prof:hover,.prof:active{color:#fff}
+.prof:hover .av,.prof:active .av{outline:3px solid #fff}
+.setup{width:100%;max-width:420px;display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.setup .sr{display:flex;gap:8px}
+.setup .sr input{flex:1}
+.setup .eb{width:46px;height:46px;font-size:24px;border-radius:8px;border:0}
+.login{width:100%;max-width:360px;display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.menu{display:flex;flex-direction:column;gap:2px;max-width:480px;margin:18px auto;text-align:left}
+.menu button{background:var(--bg2);border:0;padding:15px 16px;font-size:15px;text-align:left;border-radius:0}
+.menu button:first-child{border-radius:10px 10px 0 0}.menu button:last-child{border-radius:0 0 10px 10px}
+.demo{background:#1f1a0a;border:1px solid #4a3d10;border-radius:10px;padding:12px;font-size:14px;max-width:480px;margin:10px auto;color:#f3dc8a;text-align:left}
+.emo{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.emo button{font-size:26px;padding:6px 0;background:var(--bg3);border:2px solid transparent;border-radius:8px}
+.emo button.on{border-color:#fff}
+.cols{display:flex;gap:8px;flex-wrap:wrap}
+.cols button{width:36px;height:36px;border-radius:50%;border:3px solid transparent}
+.cols button.on{border-color:#fff}
+/* ruleta */
+.rou{padding:6px 16px 10px}
+.rou .form{flex-direction:row;flex-wrap:wrap}
+.rou .form label{flex:1;min-width:130px}
+.rouRes{min-height:150px;display:flex;align-items:center;justify-content:center;margin:16px 0;text-align:center}
+.rouRes .poster{width:130px;margin:0 auto}
+.spin-t{font-size:22px;font-weight:800;color:var(--tx2)}
+/* barra temporizador */
+.tbar{position:fixed;left:8px;right:8px;bottom:calc(66px + env(safe-area-inset-bottom));z-index:31;background:#2a1213;border:1px solid #6a1a1e;border-radius:10px;padding:8px 8px 8px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 6px 20px rgba(0,0,0,.5);max-width:740px;margin:0 auto}
+.tb-l{flex:1;min-width:0;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px}
+.tb-l b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--red);flex:0 0 auto;animation:pulse 1.4s infinite}
+.img.fb + .tb{display:none}
+.ath .img.fb,.thumb .img.fb{justify-content:center;align-items:center;padding:0}
+.ath .fbt,.thumb .fbt{display:none}
+.ath .fbe,.thumb .fbe{position:static;font-size:18px}
+#toast{position:fixed;left:50%;bottom:calc(140px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#fff;color:#000;padding:10px 16px;border-radius:8px;font-size:14px;font-weight:600;z-index:60;opacity:0;pointer-events:none;transition:.25s;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div id="app"><div class="spinner" style="margin-top:40vh"></div></div>
+<div id="timerbar" class="hidden"></div>
+<div id="modal" class="hidden"><div class="backdrop" onclick="closeModal()"></div><div class="sheet" id="sheet"></div></div>
+<div id="toast"></div>
+<script>
+'use strict';
+/* =========================================================
+   MARATÓN · biblioteca compartida de pelis, series, libros,
+   podcasts, música, audiolibros y videojuegos
+   ========================================================= */
+const C0 = window.APP_CONFIG || {};
+const CFG = (C0.supabaseUrl && /^https:\/\//.test(C0.supabaseUrl) && C0.supabaseKey && !/PEGA/i.test(C0.supabaseKey + C0.supabaseUrl)) ? C0 : null;
+const APP = C0.appName || 'Maratón';
+document.title = APP;
+
+const T = ['members','items','statuses','sessions','comments','recs','activity','settings'];
+let DB = Object.fromEntries(T.map(t => [t, []]));
+let sb = null, me = null, view = 'home', modal = null, ui = {manual:false};
+let lib = {type:'all', status:'all', q:'', sort:'recent', owned:false, genre:''};
+let add = {type:'movie', q:'', res:null, loading:false, err:''};
+let statP = 'month';
+let rou = {type:'movie', genre:'', max:'', scope:'all', pick:null, spinning:false};
+
+const TYPES = {
+  movie:    {n:'Película',   p:'Películas',   e:'🎬', doing:'Viendo',     done:'Vista',     inf:'ver'},
+  series:   {n:'Serie',      p:'Series',      e:'📺', doing:'Viendo',     done:'Vista',     inf:'ver'},
+  book:     {n:'Libro',      p:'Libros',      e:'📖', doing:'Leyendo',    done:'Leído',     inf:'leer'},
+  audiobook:{n:'Audiolibro', p:'Audiolibros', e:'🎧', doing:'Escuchando', done:'Escuchado', inf:'escuchar'},
+  podcast:  {n:'Podcast',    p:'Podcasts',    e:'🎙️', doing:'Escuchando', done:'Al día',    inf:'escuchar', sq:1},
+  album:    {n:'Álbum',      p:'Álbumes',     e:'💿', doing:'Escuchando', done:'Escuchado', inf:'escuchar', sq:1},
+  artist:   {n:'Artista',    p:'Artistas',    e:'🎤', doing:'Escuchando', done:'Favorito',  inf:'escuchar a', sq:1},
+  song:     {n:'Canción',    p:'Canciones',   e:'🎵', doing:'Escuchando', done:'Escuchada', inf:'escuchar', sq:1},
+  game:     {n:'Videojuego', p:'Videojuegos', e:'🎮', doing:'Jugando',    done:'Terminado', inf:'jugar a'},
+};
+const ST = ['wishlist','pending','doing','done','dropped'];
+const stLabel = (s, type) => ({wishlist:'Wishlist', pending:'Pendiente', doing: type ? TYPES[type].doing : 'En curso', done: type ? TYPES[type].done : 'Terminado', dropped:'Abandonado'})[s] || '—';
+const TMDB_G = {28:'Acción',12:'Aventura',16:'Animación',35:'Comedia',80:'Crimen',99:'Documental',18:'Drama',10751:'Familia',14:'Fantasía',36:'Historia',27:'Terror',10402:'Música',9648:'Misterio',10749:'Romance',878:'Ciencia ficción',10770:'Película de TV',53:'Suspense',10752:'Bélica',37:'Western',10759:'Acción y aventura',10762:'Infantil',10763:'Noticias',10764:'Reality',10765:'Ciencia ficción y fantasía',10766:'Telenovela',10767:'Entrevistas',10768:'Guerra y política'};
+const EMO = ['🦊','🐻','🐱','🐼','🐸','🦁','🐙','🦄','🐧','🐯','🐨','🦉','🐶','🐵','🦖','🐳','🌵','⭐'];
+const COL = ['#e50914','#0071eb','#2bb24c','#f5a623','#8e44ad','#e91e8c','#00a8a8','#6d6d6e'];
+
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const enc = encodeURIComponent;
+const cssUrl = u => esc(String(u).replace(/["'()\\\s]/g, c => encodeURIComponent(c)));
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+const now = () => new Date().toISOString();
+const today = () => new Date().toLocaleDateString('sv-SE');
+const dayOf = iso => new Date(iso).toLocaleDateString('sv-SE');
+const yr = d => { const y = parseInt(String(d || '').slice(0, 4)); return isNaN(y) ? null : y; };
+const clamp = v => Math.max(0, Math.min(100, Math.round(v)));
+const sum = a => a.reduce((x, s) => x + (s.minutes || 0), 0);
+const byUpd = (a, b) => String(b.updated_at || '').localeCompare(String(a.updated_at || ''));
+const byCreated = (a, b) => String(b.created_at || '').localeCompare(String(a.created_at || ''));
+const hash = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h); };
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]/g, '');
+const fmtMin = m => { m = Math.round(m || 0); const h = Math.floor(m / 60), r = m % 60; return h ? `${h} h${r ? ' ' + r + ' min' : ''}` : `${r} min`; };
+const clock = start => { const s = Math.max(0, Math.floor((Date.now() - start) / 1000)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ':' : '') + String(m).padStart(h ? 2 : 1, '0') + ':' + String(x).padStart(2, '0'); };
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+function ago(iso) {
+  const s = (Date.now() - new Date(iso)) / 1000;
+  if (s < 60) return 'ahora';
+  if (s < 3600) return 'hace ' + Math.floor(s / 60) + ' min';
+  if (s < 86400) return 'hace ' + Math.floor(s / 3600) + ' h';
+  if (s < 604800) { const d = Math.floor(s / 86400); return d === 1 ? 'ayer' : 'hace ' + d + ' días'; }
+  return new Date(iso).toLocaleDateString('es-ES', {day:'numeric', month:'short', year: new Date(iso).getFullYear() === new Date().getFullYear() ? undefined : 'numeric'});
+}
+let toastT;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2600); }
+function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('No se pudo cargar ' + src)); document.head.appendChild(s); }); }
+async function getJSON(u, opt) { const r = await fetch(u, opt); if (!r.ok) throw new Error('Error ' + r.status); return r.json(); }
+function jsonp(url) {
+  return new Promise((res, rej) => {
+    const cb = 'jp' + Date.now() + Math.floor(Math.random() * 1e5); const s = document.createElement('script');
+    const tm = setTimeout(() => { delete window[cb]; s.remove(); rej(new Error('Tiempo agotado')); }, 12000);
+    window[cb] = d => { clearTimeout(tm); delete window[cb]; s.remove(); res(d); };
+    s.onerror = () => { clearTimeout(tm); s.remove(); rej(new Error('Sin conexión')); };
+    s.src = url + '&callback=' + cb; document.head.appendChild(s);
+  });
+}
+
+/* ---------- acceso a datos ---------- */
+const member = id => DB.members.find(m => m.id === id) || {name:'?', emoji:'👤', color:'#555'};
+const item = id => DB.items.find(i => i.id === id);
+const myStatus = (itemId, mid = me) => DB.statuses.find(s => s.item_id === itemId && s.member_id === mid);
+const setting = k => (DB.settings.find(s => s.id === k) || {}).value || '';
+function avg(id) { const r = DB.statuses.filter(s => s.item_id === id && s.rating).map(s => s.rating); return r.length ? r.reduce((a, b) => a + b, 0) / r.length : null; }
+
+let saveT;
+function persist() { clearTimeout(saveT); saveT = setTimeout(() => LS.set(CFG ? 'mt-cache' : 'mt-demo', DB), 300); }
+function merge(t, row) { const i = DB[t].findIndex(r => r.id === row.id); const full = i >= 0 ? {...DB[t][i], ...row} : row; if (i >= 0) DB[t][i] = full; else DB[t].push(full); return full; }
+async function put(t, row, quiet) { const full = merge(t, row); persist(); if (!quiet) refresh(); if (sb) await remote({op:'up', t, rows:[full]}); return full; }
+async function putMany(t, rows, quiet) { const full = rows.map(r => merge(t, r)); persist(); if (!quiet) refresh(); if (sb) for (let i = 0; i < full.length; i += 400) await remote({op:'up', t, rows: full.slice(i, i + 400)}); }
+async function del(t, id) {
+  DB[t] = DB[t].filter(r => r.id !== id);
+  if (t === 'items') for (const x of ['statuses','sessions','comments','recs','activity']) DB[x] = DB[x].filter(r => r.item_id !== id);
+  persist(); refresh(); if (sb) await remote({op:'del', t, id});
+}
+async function runOp(op) {
+  const r = op.op === 'up' ? await sb.from(op.t).upsert(op.rows) : await sb.from(op.t).delete().eq('id', op.id);
+  if (r.error) { if (/fetch|network|load failed|timeout/i.test(r.error.message || '')) throw r.error; toast('Error al guardar: ' + r.error.message); }
+}
+async function remote(op) {
+  if (!navigator.onLine) return queue(op);
+  try { await runOp(op); } catch (e) { queue(op); }
+}
+function queue(op) { const q = LS.get('mt-outbox', []); q.push(op); LS.set('mt-outbox', q); toast('Sin conexión: se sincronizará al volver la red'); }
+async function flush() {
+  if (!sb) return; const q = LS.get('mt-outbox', []); if (!q.length) return;
+  for (let i = 0; i < q.length; i++) { try { await runOp(q[i]); } catch (e) { LS.set('mt-outbox', q.slice(i)); return; } }
+  LS.set('mt-outbox', []); toast('Cambios sincronizados ✓');
+}
+async function fetchAll(t) {
+  let out = [], from = 0;
+  for (;;) { const {data, error} = await sb.from(t).select('*').range(from, from + 999); if (error) throw error; out = out.concat(data); if (data.length < 1000) break; from += 1000; }
+  return out;
+}
+async function loadRemote() {
+  try {
+    const res = await Promise.all(T.map(fetchAll)); T.forEach((t, i) => DB[t] = res[i]);
+    const q = LS.get('mt-outbox', []); // reaplica cambios pendientes por encima
+    q.forEach(op => { if (op.op === 'up') op.rows.forEach(r => merge(op.t, r)); else DB[op.t] = DB[op.t].filter(r => r.id !== op.id); });
+    persist(); flush();
+  } catch (e) {
+    const c = LS.get('mt-cache', null); if (c) { T.forEach(t => DB[t] = c[t] || []); toast('Sin conexión: mostrando la última copia guardada'); } else throw e;
+  }
+}
+function subscribe() {
+  sb.channel('db').on('postgres_changes', {event:'*', schema:'public'}, p => {
+    const t = p.table; if (!DB[t]) return;
+    if (p.eventType === 'DELETE') { DB[t] = DB[t].filter(r => r.id !== (p.old && p.old.id)); if (t === 'items') for (const x of ['statuses','sessions','comments','recs','activity']) DB[x] = DB[x].filter(r => r.item_id !== p.old.id); }
+    else merge(t, p.new);
+    persist(); softRefresh();
+  }).subscribe();
+  document.addEventListener('visibilitychange', async () => { if (document.visibilityState === 'visible' && navigator.onLine) { try { await loadRemote(); softRefresh(); } catch (e) {} } });
+  window.addEventListener('online', async () => { await flush(); try { await loadRemote(); softRefresh(); } catch (e) {} });
+}
+
+/* ---------- arranque ---------- */
+async function boot() {
+  try {
+    if (CFG) {
+      if (!window.supabase) await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
+      sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseKey);
+      const {data} = await sb.auth.getSession();
+      if (!data.session) return renderLogin();
+      await loadRemote(); subscribe();
+    } else {
+      const d = LS.get('mt-demo', null) || demoSeed(); T.forEach(t => DB[t] = d[t] || []); persist();
+    }
+  } catch (e) {
+    $('#app').innerHTML = `<div class="who"><div class="logo big">${esc(APP)}</div><div class="err" style="max-width:420px">No se ha podido conectar: ${esc(e.message || e)}<br><br>Revisa la conexión o los datos de config.js.</div><button class="btn red" onclick="location.reload()">Reintentar</button></div>`;
+    return;
+  }
+  const saved = LS.get('mt-me', null);
+  me = DB.members.some(m => m.id === saved) ? saved : null;
+  refresh();
+  setInterval(tick, 1000);
+}
+function tick() { document.querySelectorAll('.tclock').forEach(e => e.textContent = clock(+e.dataset.start)); }
+
+/* ---------- render principal ---------- */
+let pend = false;
+function softRefresh() { const a = document.activeElement; if (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) { pend = true; return; } refresh(); }
+document.addEventListener('focusout', () => { if (pend) { pend = false; setTimeout(refresh, 60); } });
+function refresh() {
+  if (!sb && CFG) return;
+  if (!me) { renderProfiles(); return; }
+  if (modal) renderModal(); else renderView();
+  renderTimerBar();
+}
+function go(v, focus) { view = v; if (modal) { modal = null; $('#modal').classList.add('hidden'); document.body.classList.remove('noscroll'); } renderView(); window.scrollTo(0, 0); if (focus) setTimeout(() => { const q = $('#q'); if (q) q.focus(); }, 50); }
+function renderView() {
+  const m = member(me);
+  const html = {home:vHome, library:vLibrary, add:vAdd, feed:vFeed, stats:vStats, profile:vProfile}[view]();
+  $('#app').innerHTML = `<header class="top"><div class="logo" onclick="go('home')">${esc(APP)}</div><div class="sp"></div>
+    <button class="ib" onclick="openRoulette()" title="¿Qué vemos esta noche?">🎲</button>
+    <button class="ib" onclick="go('library',true)" title="Buscar">🔍</button>
+    <button class="av sm" style="background:${m.color}" onclick="go('profile')" title="Perfil">${m.emoji}</button></header>
+    <main>${html}</main>${nav()}`;
+  renderTimerBar();
+}
+function nav() {
+  const seen = LS.get('mt-seen', '');
+  const unread = DB.activity.filter(a => a.member_id !== me && String(a.created_at) > seen).length;
+  const b = (v, ic, l, cls = '') => `<button class="${view === v ? 'on' : ''} ${cls}" onclick="go('${v}')"><span class="ic">${ic}</span>${l}${v === 'feed' && unread && view !== 'feed' ? `<span class="badge">${unread > 99 ? '99+' : unread}</span>` : ''}</button>`;
+  return `<nav class="tabs">${b('home','🏠','Inicio')}${b('library','📚','Biblioteca')}${b('add','＋','Añadir','add')}${b('feed','🔔','Actividad')}${b('stats','📊','Estadísticas')}</nav>`;
+}
+function art(it) {
+  if (!it) return '<div class="img"></div>';
+  if (it.cover) return `<div class="img" style="background-image:url(${cssUrl(it.cover)})"></div>`;
+  const h = hash(it.title) % 360;
+  return `<div class="img fb" style="background:linear-gradient(160deg,hsl(${h} 55% 34%),hsl(${(h + 40) % 360} 60% 12%))"><span class="fbe">${TYPES[it.type].e}</span><span class="fbt">${esc(it.title)}</span></div>`;
+}
+function pct(it, s) {
+  if (!s) return null; const p = s.progress || {}, x = it.extra || {};
+  if (it.type === 'book' && p.page && x.pages) return clamp(p.page / x.pages * 100);
+  if (it.type === 'series' && x.seasons && x.seasons.length && p.season) { const tot = x.seasons.reduce((a, b) => a + b, 0); const before = x.seasons.slice(0, p.season - 1).reduce((a, b) => a + b, 0) + (p.episode || 0); return tot ? clamp(before / tot * 100) : null; }
+  if (it.type === 'game' && p.pct) return clamp(p.pct);
+  if ((it.type === 'movie' || it.type === 'audiobook') && p.minute && x.runtime) return clamp(p.minute / x.runtime * 100);
+  return null;
+}
+function extraTxt(it) {
+  const x = it.extra || {};
+  if (x.runtime && it.type === 'movie') return fmtMin(x.runtime);
+  if (x.seasons && x.seasons.length) return x.seasons.length + (x.seasons.length === 1 ? ' temporada' : ' temporadas');
+  if (x.pages) return x.pages + ' págs.';
+  if (x.tracks) return x.tracks + ' canciones';
+  if (x.duration) return fmtMin(x.duration);
+  return '';
+}
+const metaLine = it => esc([TYPES[it.type].n, it.year, it.subtitle].filter(Boolean).join(' · '));
+function timer() { return LS.get('mt-timer', null); }
+function timerFor(id) { const t = timer(); return t && t.item_id === id ? t : null; }
+function poster(it, o = {}) {
+  const s = myStatus(it.id), p = pct(it, s);
+  return `<div class="poster ${TYPES[it.type].sq ? 'sq' : ''}" onclick="openItem('${it.id}')">${art(it)}
+    ${o.badge ? `<span class="tb">${TYPES[it.type].e}</span>` : ''}
+    ${s && s.rating ? `<span class="rt">★ ${s.rating}</span>` : ''}
+    ${p != null && s && s.status === 'doing' ? `<div class="pb"><i style="width:${p}%"></i></div>` : ''}
+    ${timerFor(it.id) ? '<span class="live">● EN CURSO</span>' : ''}
+    ${o.cap ? `<div class="cap">${esc(it.title)}</div>${o.cap2 ? `<div class="cap2">${o.cap2}</div>` : ''}` : ''}</div>`;
+}
+function row(title, items, o = {}) {
+  if (!items.length) return '';
+  return `<section class="row"><h2>${title}${o.sub ? ` <small>${o.sub}</small>` : ''}</h2><div class="scroller">${items.slice(0, 30).map(i => poster(i, {badge: o.badge !== false})).join('')}</div></section>`;
+}
+const uniq = a => { const s = new Set(); return a.filter(x => x && !s.has(x.id) && s.add(x.id)); };
+function empty(e, t, d, btn) { return `<div class="empty"><div class="e">${e}</div><b>${t}</b>${d}${btn ? `<div style="margin-top:18px">${btn}</div>` : ''}</div>`; }
+
+/* ---------- INICIO ---------- */
+function vHome() {
+  if (!DB.items.length) return `<div style="height:40px"></div>` + empty('🍿', 'Vuestra biblioteca está vacía', 'Añade la primera peli, serie, libro, disco, podcast o juego.', `<button class="btn red" onclick="go('add')">＋ Añadir algo</button>`);
+  const mine = DB.statuses.filter(s => s.member_id === me);
+  const doing = uniq(mine.filter(s => s.status === 'doing').sort(byUpd).map(s => item(s.item_id)));
+  const recs = uniq([...DB.recs].filter(r => r.to_id === me).sort(byCreated).map(r => item(r.item_id)).filter(i => i && !['done','dropped'].includes((myStatus(i.id) || {}).status)));
+  const wish = uniq(mine.filter(s => s.status === 'wishlist' || s.status === 'pending').sort(byUpd).map(s => item(s.item_id)));
+  const group = uniq(DB.statuses.filter(s => s.member_id !== me && s.status === 'doing').sort(byUpd).map(s => item(s.item_id)));
+  const top = DB.items.map(i => [i, avg(i.id)]).filter(x => x[1] >= 8).sort((a, b) => b[1] - a[1]).map(x => x[0]);
+  const recent = [...DB.items].sort(byCreated);
+  let heroIt = doing[0];
+  if (!heroIt) { const pool = wish.length ? wish : recent; heroIt = pool[hash(today()) % pool.length]; }
+  const s = myStatus(heroIt.id), run = timerFor(heroIt.id);
+  const byType = Object.keys(TYPES).map(k => row(TYPES[k].e + ' ' + TYPES[k].p, recent.filter(i => i.type === k), {badge:false})).join('');
+  return `<div class="hero" style="${heroIt.cover ? `--bgimg:url(${cssUrl(heroIt.cover)})` : ''}"><div class="hero-bg"></div>
+    <div class="hero-in"><div class="hero-cover ${TYPES[heroIt.type].sq ? 'sq' : ''}" onclick="openItem('${heroIt.id}')">${art(heroIt)}</div>
+    <div class="hero-txt"><div class="kicker">${TYPES[heroIt.type].e} ${s && s.status === 'doing' ? 'Sigue donde lo dejaste' : 'Para ti hoy'}</div>
+    <h1>${esc(heroIt.title)}</h1><div class="meta">${metaLine(heroIt)}</div>
+    <div class="hero-btns"><button class="btn white" onclick="toggleTimer('${heroIt.id}')">${run ? '⏸ Parar' : '▶ ' + (s && s.status === 'doing' ? 'Continuar' : 'Empezar')}</button>
+    <button class="btn grey" onclick="openItem('${heroIt.id}')">ⓘ Más info</button></div></div></div></div>
+    ${row('Continuar', doing)}
+    ${row('💌 Te recomiendan', recs)}
+    ${row('Tu wishlist', wish)}
+    ${row('Lo que está viendo el grupo', group)}
+    ${row('⭐ Lo mejor según el grupo', top, {sub:'nota media 8 o más'})}
+    ${row('Añadido recientemente', recent.slice(0, 20))}
+    ${byType}`;
+}
+
+/* ---------- BIBLIOTECA ---------- */
+function setLib(k, v) { lib[k] = v; if (k === 'type') lib.genre = ''; renderView(); }
+const chip = (l, on, fn) => `<button class="chip ${on ? 'on' : ''}" onclick="${fn}">${l}</button>`;
+function libItems() {
+  const q = norm(lib.q);
+  let a = DB.items.filter(i =>
+    (lib.type === 'all' || i.type === lib.type) &&
+    (!q || norm(i.title + ' ' + (i.subtitle || '') + ' ' + (i.location || '') + ' ' + (i.genres || []).join(' ')).includes(q)) &&
+    (!lib.owned || i.owned) &&
+    (!lib.genre || (i.genres || []).includes(lib.genre)));
+  if (lib.status !== 'all') a = a.filter(i => { const s = myStatus(i.id); return lib.status === 'none' ? !(s && s.status) : s && s.status === lib.status; });
+  const srt = {
+    recent: byCreated,
+    title: (x, y) => x.title.localeCompare(y.title, 'es'),
+    rating: (x, y) => (avg(y.id) || 0) - (avg(x.id) || 0),
+    mine: (x, y) => ((myStatus(y.id) || {}).rating || 0) - ((myStatus(x.id) || {}).rating || 0),
+    year: (x, y) => (y.year || 0) - (x.year || 0)
+  }[lib.sort];
+  return a.sort(srt);
+}
+function vLibrary() {
+  const pool = DB.items.filter(i => lib.type === 'all' || i.type === lib.type);
+  const genres = [...new Set(pool.flatMap(i => i.genres || []))].sort((a, b) => a.localeCompare(b, 'es'));
+  return `<div class="pad"><input id="q" class="search" type="search" placeholder="Buscar título, autor, género, ubicación…" value="${esc(lib.q)}" oninput="lib.q=this.value;renderGrid()"></div>
+  <div class="chips">${chip('Todo', lib.type === 'all', "setLib('type','all')")}${Object.entries(TYPES).map(([k, t]) => chip(t.e + ' ' + t.p, lib.type === k, `setLib('type','${k}')`)).join('')}</div>
+  <div class="chips">${[['all','Cualquier estado'],['none','Sin estado'], ...ST.map(s => [s, stLabel(s)])].map(([k, l]) => chip(l, lib.status === k, `setLib('status','${k}')`)).join('')}</div>
+  <div class="pad filters">
+    <select onchange="setLib('genre',this.value)"><option value="">Todos los géneros</option>${genres.map(g => `<option ${lib.genre === g ? 'selected' : ''}>${esc(g)}</option>`).join('')}</select>
+    <select onchange="setLib('sort',this.value)">${[['recent','Recientes'],['title','Título A-Z'],['rating','Nota del grupo'],['mine','Mi nota'],['year','Año']].map(([k, l]) => `<option value="${k}" ${lib.sort === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
+    <label class="tog"><input type="checkbox" ${lib.owned ? 'checked' : ''} onchange="setLib('owned',this.checked)"> Lo tenemos</label>
+  </div><div id="grid">${gridHTML()}</div>`;
+}
+function gridHTML() {
+  const a = libItems();
+  if (!a.length) return empty('🔎', 'Nada por aquí', DB.items.length ? 'Prueba con otros filtros.' : 'Aún no habéis añadido nada.', `<button class="btn red" onclick="go('add')">＋ Añadir</button>`);
+  return `<div class="count">${a.length} ${a.length === 1 ? 'título' : 'títulos'}</div><div class="grid">${a.map(i => poster(i, {badge: lib.type === 'all', cap:1, cap2: esc(i.owned && i.location ? '📍 ' + i.location : [i.year, i.subtitle].filter(Boolean).join(' · '))})).join('')}</div>`;
+}
+function renderGrid() { const g = $('#grid'); if (g) g.innerHTML = gridHTML(); }
+
+/* ---------- AÑADIR ---------- */
+const HINTS = {movie:'Título de la película', series:'Título de la serie', book:'Título, autor o isbn:978…', audiobook:'Título o autor', podcast:'Nombre del podcast', album:'Álbum o artista', artist:'Nombre del artista', song:'Canción o artista', game:'Nombre del videojuego'};
+function vAdd() {
+  return `<div class="pad"><h2 class="h">Añadir</h2>
+  <div class="types">${Object.entries(TYPES).map(([k, t]) => `<button class="tt ${add.type === k ? 'on' : ''}" onclick="add.type='${k}';add.res=null;add.err='';renderView()"><span>${t.e}</span>${t.n}</button>`).join('')}</div>
+  <form class="sbar" onsubmit="event.preventDefault();doSearch(this.q.value)"><input name="q" class="search" type="search" placeholder="${HINTS[add.type]}" value="${esc(add.q)}" autocomplete="off" enterkeyhint="search"><button class="btn red">Buscar</button></form>
+  <div id="results">${resultsHTML()}</div>
+  <button class="btn grey full" onclick="openManual()">✏️ Añadir a mano</button></div>`;
+}
+function resultsHTML() {
+  if (add.loading) return '<div class="spinner"></div>';
+  if (add.err) return `<div class="err">${esc(add.err)}</div>`;
+  if (!add.res) return '';
+  if (!add.res.length) return '<div class="empty" style="padding:24px">Sin resultados. Prueba con otras palabras o añádelo a mano.</div>';
+  return add.res.map((r, i) => {
+    const ex = DB.items.find(x => x.type === r.type && ((r.external_id && x.external_id === r.external_id && x.source === r.source) || (norm(x.title) === norm(r.title) && (!x.year || !r.year || x.year === r.year))));
+    return `<div class="res"><div class="thumb ${TYPES[r.type].sq ? 'sq' : ''}">${art(r)}</div><div class="rt-txt"><b>${esc(r.title)}</b><div class="sub">${esc([r.year, r.subtitle].filter(Boolean).join(' · '))}</div></div>
+    ${ex ? `<button class="btn grey sm" onclick="openItem('${ex.id}')">Ya está ✓</button>` : `<button class="btn red sm" id="ab${i}" onclick="addResult(${i})">＋ Añadir</button>`}</div>`;
+  }).join('');
+}
+async function doSearch(q) {
+  q = q.trim(); if (!q) return; add.q = q; add.loading = true; add.err = ''; $('#results').innerHTML = resultsHTML();
+  try { add.res = await searchAPI(add.type, q); } catch (e) { add.err = e.message || 'Error en la búsqueda'; add.res = null; }
+  add.loading = false; const r = $('#results'); if (r) r.innerHTML = resultsHTML();
+}
+async function tmdb(path, params = {}) {
+  const k = setting('tmdb_key').trim();
+  if (!k) throw new Error('Para buscar pelis y series falta la clave gratuita de TMDB. Ve a tu perfil (arriba a la derecha) → Claves de búsqueda. Mientras, puedes añadirla a mano.');
+  const u = new URL('https://api.themoviedb.org/3' + path); u.searchParams.set('language', 'es-ES');
+  for (const [a, b] of Object.entries(params)) u.searchParams.set(a, b);
+  const h = {}; if (k.length > 40) h.Authorization = 'Bearer ' + k; else u.searchParams.set('api_key', k);
+  const r = await fetch(u, {headers:h}); if (r.status === 401) throw new Error('La clave de TMDB no es válida. Revísala en tu perfil → Claves de búsqueda.'); if (!r.ok) throw new Error('TMDB respondió ' + r.status); return r.json();
+}
+async function itunes(url) { try { return await getJSON(url); } catch (e) { return jsonp(url); } }
+async function searchAPI(type, q) {
+  if (type === 'movie' || type === 'series') {
+    const r = await tmdb('/search/' + (type === 'movie' ? 'movie' : 'tv'), {query:q, include_adult:'false'});
+    return (r.results || []).slice(0, 15).map(x => ({type, title:x.title || x.name, subtitle:x.original_title && x.original_title !== x.title ? x.original_title : (x.original_name && x.original_name !== x.name ? x.original_name : ''), year:yr(x.release_date || x.first_air_date), cover:x.poster_path ? 'https://image.tmdb.org/t/p/w342' + x.poster_path : '', description:x.overview || '', genres:(x.genre_ids || []).map(g => TMDB_G[g]).filter(Boolean), source:'tmdb', external_id:String(x.id), extra:{}}));
+  }
+  if (type === 'book' || type === 'audiobook') {
+    try {
+      const r = await getJSON(`https://www.googleapis.com/books/v1/volumes?q=${enc(q)}&maxResults=20&printType=books`);
+      return (r.items || []).map(v => { const b = v.volumeInfo || {}; const img = b.imageLinks || {};
+        return {type, title:b.title + (b.subtitle ? ': ' + b.subtitle : ''), subtitle:(b.authors || []).join(', '), year:yr(b.publishedDate), cover:(img.thumbnail || img.smallThumbnail || '').replace('http://', 'https://').replace('&edge=curl', ''), description:b.description || '', genres:b.categories || [], source:'gbooks', external_id:v.id, extra:{pages:b.pageCount || null, isbn:((b.industryIdentifiers || [])[0] || {}).identifier || null, publisher:b.publisher || null}}; });
+    } catch (e) {
+      const r = await getJSON(`https://openlibrary.org/search.json?q=${enc(q.replace(/^isbn:/i, ''))}&limit=20&fields=key,title,author_name,first_publish_year,cover_i,number_of_pages_median,subject`);
+      return (r.docs || []).map(d => ({type, title:d.title, subtitle:(d.author_name || []).join(', '), year:d.first_publish_year || null, cover:d.cover_i ? `https://covers.openlibrary.org/b/id/${d.cover_i}-L.jpg` : '', description:'', genres:(d.subject || []).slice(0, 4), source:'openlibrary', external_id:d.key, extra:{pages:d.number_of_pages_median || null}}));
+    }
+  }
+  if (['podcast','album','artist','song'].includes(type)) {
+    const ent = {podcast:'podcast', album:'album', artist:'musicArtist', song:'song'}[type];
+    const r = await itunes(`https://itunes.apple.com/search?term=${enc(q)}&media=${type === 'podcast' ? 'podcast' : 'music'}&entity=${ent}&country=es&lang=es_es&limit=20`);
+    return (r.results || []).map(x => ({type, title: type === 'song' ? x.trackName : type === 'artist' ? x.artistName : x.collectionName, subtitle: type === 'artist' ? '' : (x.artistName || '') + (type === 'song' && x.collectionName ? ' — ' + x.collectionName : ''), year:yr(x.releaseDate), cover:(x.artworkUrl600 || x.artworkUrl100 || '').replace(/\/\d+x\d+bb\./, '/600x600bb.'), description:'', genres:x.primaryGenreName ? [x.primaryGenreName] : [], source:'itunes', external_id:String(x.trackId || x.collectionId || x.artistId), extra:{tracks:x.trackCount || null, duration:x.trackTimeMillis ? Math.round(x.trackTimeMillis / 60000) : null, link:x.collectionViewUrl || x.trackViewUrl || x.artistLinkUrl || null}}));
+  }
+  if (type === 'game') {
+    const k = setting('rawg_key').trim();
+    if (!k) throw new Error('Para buscar videojuegos falta la clave gratuita de RAWG. Ve a tu perfil → Claves de búsqueda. Mientras, puedes añadirlo a mano.');
+    const r = await getJSON(`https://api.rawg.io/api/games?key=${enc(k)}&search=${enc(q)}&page_size=15`);
+    return (r.results || []).map(g => ({type, title:g.name, subtitle:(g.platforms || []).map(p => p.platform.name).slice(0, 3).join(', '), year:yr(g.released), cover:g.background_image || '', description:'', genres:(g.genres || []).map(x => x.name), source:'rawg', external_id:String(g.id), extra:{}}));
+  }
+  return [];
+}
+async function enrich(r) {
+  try {
+    if (r.source === 'tmdb' && r.type === 'movie') {
+      const d = await tmdb('/movie/' + r.external_id, {append_to_response:'credits'});
+      r.extra = {runtime:d.runtime || null}; r.genres = (d.genres || []).map(g => g.name);
+      const dir = ((d.credits || {}).crew || []).filter(c => c.job === 'Director').map(c => c.name); if (dir.length) r.subtitle = dir.join(', ');
+      r.description = r.description || d.overview || '';
+    }
+    if (r.source === 'tmdb' && r.type === 'series') {
+      const d = await tmdb('/tv/' + r.external_id);
+      r.extra = {seasons:(d.seasons || []).filter(s => s.season_number > 0).map(s => s.episode_count || 0), status:d.status || null, runtime:(d.episode_run_time || [])[0] || null};
+      r.genres = (d.genres || []).map(g => g.name);
+      r.subtitle = (d.created_by || []).map(c => c.name).join(', ') || (d.networks || []).map(n => n.name).join(', ');
+    }
+    if (r.source === 'rawg') { const d = await getJSON(`https://api.rawg.io/api/games/${r.external_id}?key=${enc(setting('rawg_key'))}`); r.description = (d.description_raw || '').slice(0, 2000); r.subtitle = (d.developers || []).map(x => x.name).join(', ') || r.subtitle; }
+  } catch (e) {}
+  return r;
+}
+async function addResult(i) {
+  const b = $('#ab' + i); if (b) { b.disabled = true; b.textContent = 'Añadiendo…'; }
+  const r = await enrich({...add.res[i]});
+  const it = {id:uid(), ...r, owned:false, format:null, location:null, created_by:me, created_at:now()};
+  await createItem(it);
+}
+async function createItem(it, status = 'wishlist') {
+  await put('items', it, true);
+  if (status === 'wishlist') await patchStatus(it.id, {status}, true); else await changeStatus(it.id, status, true);
+  log(it.id, 'add', {});
+  toast(`${TYPES[it.type].e} Añadido a la biblioteca`);
+  openItem(it.id);
+}
+
+/* ---------- FICHA ---------- */
+function openItem(id) {
+  const fresh = !modal || modal.kind !== 'item' || modal.id !== id;
+  modal = {kind:'item', id}; ui.manual = false; showModal(); renderModal(); if (fresh) $('#sheet').scrollTop = 0;
+  const it = item(id); if (it && ['movie','series'].includes(it.type) && it.source === 'tmdb') loadProviders(it);
+}
+function showModal() { const m = $('#modal'); if (m.classList.contains('hidden')) { try { history.pushState({modal:1}, ''); } catch (e) {} } m.classList.remove('hidden'); document.body.classList.add('noscroll'); }
+function closeModal(fromPop) {
+  const m = $('#modal'); if (m.classList.contains('hidden')) return;
+  m.classList.add('hidden'); document.body.classList.remove('noscroll'); modal = null; rou.spinning = false;
+  if (!fromPop && history.state && history.state.modal) { try { ignorePop = true; history.back(); } catch (e) { ignorePop = false; } }
+  renderView();
+}
+let ignorePop = false;
+window.addEventListener('popstate', () => { if (ignorePop) { ignorePop = false; return; } closeModal(true); });
+function openHTML(fn) { modal = {kind:'html', render:fn}; showModal(); renderModal(); $('#sheet').scrollTop = 0; }
+function renderModal() {
+  if (!modal) return; const sh = $('#sheet');
+  const keep = {}; sh.querySelectorAll('[data-keep]').forEach(e => keep[e.id] = e.type === 'checkbox' ? e.checked : e.value);
+  const det = [...sh.querySelectorAll('details')].map(d => d.open); const st = sh.scrollTop;
+  sh.innerHTML = modal.kind === 'item' ? itemHTML(modal.id) : modal.render();
+  for (const [k, v] of Object.entries(keep)) { const e = document.getElementById(k); if (e) { if (e.type === 'checkbox') e.checked = v; else e.value = v; } }
+  sh.querySelectorAll('details').forEach((d, i) => { if (det[i]) d.open = true; });
+  sh.scrollTop = st;
+}
+const provCache = {};
+async function loadProviders(it) {
+  if (provCache[it.id] !== undefined || !setting('tmdb_key')) return; provCache[it.id] = null;
+  try { const r = await tmdb(`/${it.type === 'movie' ? 'movie' : 'tv'}/${it.external_id}/watch/providers`); provCache[it.id] = (r.results || {}).ES || {}; } catch (e) { provCache[it.id] = {}; }
+  if (modal && modal.id === it.id) renderModal();
+}
+function providersHTML(it) {
+  const p = provCache[it.id]; if (!p) return '';
+  const grp = (k, l) => (p[k] || []).length ? `<div class="lbl">${l}</div>${p[k].map(x => `<img src="https://image.tmdb.org/t/p/w92${x.logo_path}" alt="${esc(x.provider_name)}" title="${esc(x.provider_name)}" loading="lazy">`).join('')}` : '';
+  const h = grp('flatrate', 'Incluido en suscripción') + grp('free', 'Gratis') + grp('rent', 'Alquiler') + grp('buy', 'Compra');
+  return `<h3>Dónde verlo en España</h3>${h ? `<div class="prov">${h}</div><div class="small muted" style="margin-top:6px">Datos de JustWatch vía TMDB</div>` : '<div class="small muted">No está en ninguna plataforma ahora mismo.</div>'}`;
+}
+function linksHTML(it) {
+  const x = it.extra || {}, L = [];
+  const qs = enc(it.title + (it.subtitle && !['movie','series'].includes(it.type) ? ' ' + it.subtitle.split(' — ')[0] : ''));
+  if (['podcast','album','artist','song','audiobook'].includes(it.type)) L.push(['🟢 Spotify', `https://open.spotify.com/search/${qs}`]);
+  if (it.type === 'podcast') L.push(['🟠 iVoox', `https://www.google.com/search?q=${qs}+site%3Aivoox.com`]);
+  if (x.link) L.push(['🍎 Apple', x.link]);
+  if (it.source === 'tmdb') L.push(['🎞️ TMDB', `https://www.themoviedb.org/${it.type === 'movie' ? 'movie' : 'tv'}/${it.external_id}`]);
+  if (['movie','series'].includes(it.type)) L.push(['🟡 IMDb', `https://www.imdb.com/find/?q=${enc(it.title)}`]);
+  if (['book','audiobook'].includes(it.type)) L.push(['📚 Goodreads', `https://www.goodreads.com/search?q=${enc(it.title)}`]);
+  if (x.url) L.push(['🔗 Enlace', x.url]);
+  return L.length ? `<div class="links">${L.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${l}</a>`).join('')}</div>` : '';
+}
+function itemHTML(id) {
+  const it = item(id); if (!it) { setTimeout(() => closeModal(), 0); return ''; }
+  const t = TYPES[it.type], s = myStatus(id) || {}, a = avg(id), run = timerFor(id);
+  const ses = DB.sessions.filter(x => x.item_id === id), myMin = sum(ses.filter(x => x.member_id === me)), allMin = sum(ses);
+  const others = DB.members.filter(m => m.id !== me);
+  const myRecs = DB.recs.filter(r => r.item_id === id && r.to_id === me);
+  const comments = DB.comments.filter(c => c.item_id === id).sort((x, y) => String(x.created_at).localeCompare(String(y.created_at)));
+  const locs = [...new Set(DB.items.map(i => i.location).filter(Boolean))];
+  const x = it.extra || {};
+  return `<button class="x" onclick="closeModal()" aria-label="Cerrar">✕</button>
+  <div class="dh" style="${it.cover ? `--bgimg:url(${cssUrl(it.cover)})` : ''}"><div class="hero-bg"></div>
+    <div class="dh-in"><div class="dcover ${t.sq ? 'sq' : ''}">${art(it)}</div>
+    <div style="min-width:0"><div class="kicker">${t.e} ${t.n}</div><h1>${esc(it.title)}</h1>
+    <div class="meta">${esc([it.subtitle, it.year, extraTxt(it)].filter(Boolean).join(' · '))}</div>
+    ${a ? `<div class="avg">★ ${a.toFixed(1)} <small>media del grupo</small></div>` : ''}</div></div></div>
+  <div class="dbody">
+    <div class="tm"><button class="btn ${run ? 'white' : 'red'} big" onclick="toggleTimer('${id}')">${run ? `⏸ Parar · <span class="tclock" data-start="${run.start}">${clock(run.start)}</span>` : '▶ Empezar sesión'}</button>
+    <button class="btn grey" onclick="ui.manual=!ui.manual;renderModal()">＋ Tiempo</button></div>
+    ${ui.manual ? `<div class="manual"><input type="number" id="mmin" data-keep min="1" inputmode="numeric" placeholder="Minutos"><input type="date" id="mdate" data-keep value="${today()}"><button class="btn red" onclick="addManual('${id}')">Guardar</button></div>` : ''}
+    ${allMin ? `<div class="small muted" style="margin-top:8px">Tu tiempo: <b style="color:#fff">${fmtMin(myMin)}</b> · Todo el grupo: ${fmtMin(allMin)}</div>` : ''}
+    ${myRecs.map(r => `<div class="recin">💌 <b>${esc(member(r.from_id).name)}</b> te lo recomienda${r.note ? ': ' + esc(r.note) : ''}</div>`).join('')}
+
+    <h3>Mi estado</h3>
+    <div class="seg">${ST.map(k => `<button class="${s.status === k ? 'on' : ''}" onclick="changeStatus('${id}','${k}')">${stLabel(k, it.type)}</button>`).join('')}</div>
+    <h3>Mi nota</h3>
+    <div class="rate">${[1,2,3,4,5,6,7,8,9,10].map(n => `<button class="${s.rating === n ? 'on' : ''} ${s.rating && n < s.rating ? 'fill' : ''}" onclick="setRating('${id}',${n})">${n}</button>`).join('')}</div>
+    ${progressHTML(it, s)}
+    <div class="dates"><label>Empezado<input type="date" value="${s.started_at || ''}" onchange="patchStatus('${id}',{started_at:this.value||null})"></label>
+    <label>Terminado<input type="date" value="${s.finished_at || ''}" onchange="patchStatus('${id}',{finished_at:this.value||null})"></label></div>
+    <div class="again"><span>${s.times ? `Completado ${s.times} ${s.times === 1 ? 'vez' : 'veces'}` : 'Aún sin completar'}</span>${s.times ? `<button class="btn grey sm" onclick="again('${id}')">🔁 Otra vez</button>` : ''}</div>
+
+    ${it.description ? `<h3>Sinopsis</h3><p class="desc clamp" onclick="this.classList.toggle('clamp')">${esc(it.description)}</p>` : ''}
+    ${(it.genres || []).length ? `<div class="gen">${it.genres.map(g => `<span>${esc(g)}</span>`).join('')}</div>` : ''}
+    ${['movie','series'].includes(it.type) && it.source === 'tmdb' ? providersHTML(it) : ''}
+    ${linksHTML(it)}
+
+    <h3>El grupo</h3>
+    <div class="grp">${DB.members.map(m => { const y = myStatus(id, m.id) || {}; const mm = sum(ses.filter(z => z.member_id === m.id));
+      return `<div class="gm"><span class="av xs" style="background:${m.color}">${m.emoji}</span><b>${esc(m.name)}</b><span class="muted">${y.status ? stLabel(y.status, it.type) : '—'}${y.times > 1 ? ' ×' + y.times : ''}${mm ? ' · ' + fmtMin(mm) : ''}</span>${y.rating ? `<span class="rt2">★ ${y.rating}</span>` : ''}</div>`; }).join('')}</div>
+
+    <h3>Recomendar a</h3>
+    <div class="recb">${others.map(m => { const done = DB.recs.some(r => r.item_id === id && r.from_id === me && r.to_id === m.id);
+      return `<button class="btn grey sm" ${done ? 'disabled' : ''} onclick="recommend('${id}','${m.id}')">${m.emoji} ${esc(m.name)}${done ? ' ✓' : ''}</button>`; }).join('')}</div>
+
+    <h3>Comentarios${comments.length ? ' · ' + comments.length : ''}</h3>
+    ${comments.map(c => { const m = member(c.member_id); return `<div class="cm ${c.spoiler ? 'spoiler' : ''}" onclick="this.classList.remove('spoiler')"><div class="ch"><span class="av xs" style="background:${m.color}">${m.emoji}</span><b>${esc(m.name)}</b><span class="muted">${ago(c.created_at)}</span>${c.member_id === me ? `<button class="del" onclick="event.stopPropagation();delComment('${c.id}')">Borrar</button>` : ''}</div><div class="ct">${esc(c.text)}</div></div>`; }).join('')}
+    <div class="cform"><textarea id="ctext" data-keep rows="2" placeholder="¿Qué te ha parecido?"></textarea>
+      <div class="r"><label class="tog"><input type="checkbox" id="cspoil" data-keep> Tiene spoilers</label><button class="btn red sm" onclick="addComment('${id}')">Publicar</button></div></div>
+
+    <h3>Inventario</h3>
+    <label class="tog"><input type="checkbox" ${it.owned ? 'checked' : ''} onchange="patchItem('${id}',{owned:this.checked})"> Lo tenemos</label>
+    ${it.owned ? `<div class="inv"><select onchange="patchItem('${id}',{format:this.value||null})">${[['','Formato'],['Físico','📦 Físico'],['Digital','☁️ Digital']].map(([v, l]) => `<option value="${v}" ${(it.format || '') === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+      <input placeholder="📍 Ubicación (estantería salón…)" value="${esc(it.location || '')}" onchange="patchItem('${id}',{location:this.value.trim()||null})" list="locs"><datalist id="locs">${locs.map(l => `<option value="${esc(l)}">`).join('')}</datalist></div>` : ''}
+
+    <details class="edit"><summary>✏️ Editar ficha</summary><div class="form">
+      <label>Título<input id="ef-title" value="${esc(it.title)}"></label>
+      <label>${['book','audiobook'].includes(it.type) ? 'Autor' : ['movie','series'].includes(it.type) ? 'Director / creador' : it.type === 'game' ? 'Estudio / plataformas' : 'Artista'}<input id="ef-sub" value="${esc(it.subtitle || '')}"></label>
+      <label>Año<input id="ef-year" type="number" inputmode="numeric" value="${it.year || ''}"></label>
+      <label>Géneros (separados por comas)<input id="ef-gen" value="${esc((it.genres || []).join(', '))}"></label>
+      ${it.type === 'book' ? `<label>Páginas totales<input id="ef-pages" type="number" inputmode="numeric" value="${x.pages || ''}"></label>` : ''}
+      ${['movie','audiobook'].includes(it.type) ? `<label>Duración (minutos)<input id="ef-run" type="number" inputmode="numeric" value="${x.runtime || ''}"></label>` : ''}
+      ${it.type === 'series' ? `<label>Capítulos por temporada (ej: 8, 10, 10)<input id="ef-seasons" value="${esc((x.seasons || []).join(', '))}"></label>` : ''}
+      <label>URL de la portada<input id="ef-cover" value="${esc(it.cover || '')}" placeholder="https://…"></label>
+      <label>Enlace propio (Spotify, iVoox, web…)<input id="ef-url" value="${esc(x.url || '')}" placeholder="https://…"></label>
+      <label>Sinopsis<textarea id="ef-desc" rows="4">${esc(it.description || '')}</textarea></label>
+      <button class="btn red" onclick="saveEdit('${id}')">Guardar cambios</button></div></details>
+    <button class="btn danger full" onclick="removeItem('${id}')">Eliminar de la biblioteca</button>
+    <div class="small muted center" style="margin-top:12px">Añadido por ${esc(member(it.created_by).name)} · ${ago(it.created_at)}</div>
+  </div>`;
+}
+function progressHTML(it, s) {
+  const p = s.progress || {}, x = it.extra || {}, id = it.id;
+  const num = (k, ph, w = '') => `<input type="number" inputmode="numeric" min="0" class="pn ${w}" value="${p[k] ?? ''}" placeholder="${ph}" onchange="setProg('${id}',{${k}:this.value===''?null:+this.value})">`;
+  let h;
+  switch (it.type) {
+    case 'book': h = `Página ${num('page', '0')} ${x.pages ? 'de ' + x.pages : ''}`; break;
+    case 'series': h = `Último visto: T ${num('season', '1', 's')} E ${num('episode', '0', 's')} <button class="btn grey sm" onclick="nextEp('${id}')">⏭ Siguiente capítulo</button>${x.seasons && x.seasons.length ? `<div class="small muted" style="width:100%">${x.seasons.length} temporadas · ${x.seasons.reduce((a, b) => a + b, 0)} capítulos${x.status === 'Returning Series' ? ' · en emisión' : x.status === 'Ended' ? ' · finalizada' : ''}</div>` : ''}`; break;
+    case 'podcast': h = `Último episodio ${num('episode', '0')} <button class="btn grey sm" onclick="nextEp('${id}')">⏭ Siguiente</button>`; break;
+    case 'movie': case 'audiobook': h = `Minuto ${num('minute', '0')} ${x.runtime ? 'de ' + x.runtime : ''}`; break;
+    case 'game': h = `Completado ${num('pct', '0')} %`; break;
+    default: return '';
+  }
+  const pc = pct(it, s);
+  return `<h3>Progreso</h3><div class="prog">${h}</div>${pc != null ? `<div class="pb big"><i style="width:${pc}%"></i></div>` : ''}`;
+}
+
+/* ---------- acciones ---------- */
+function log(itemId, kind, data) { return put('activity', {id:uid(), member_id:me, item_id:itemId, kind, data:data || {}, created_at:now()}, true); }
+async function patchStatus(id, p, quiet) {
+  const old = myStatus(id) || {id:id + '_' + me, item_id:id, member_id:me, status:null, rating:null, progress:{}, started_at:null, finished_at:null, times:0};
+  return put('statuses', {...old, ...p, updated_at:now()}, quiet);
+}
+async function changeStatus(id, st, quiet) {
+  const old = myStatus(id) || {}; if (old.status === st) return;
+  const p = {status:st};
+  if (st === 'doing' && !old.started_at) p.started_at = today();
+  if (st === 'done') { p.finished_at = today(); p.times = Math.max(old.times || 0, 1); if (!old.started_at) p.started_at = today(); }
+  await patchStatus(id, p, quiet);
+  log(id, 'status', {status:st});
+  if (st === 'done') toast('¡Terminado! Ponle nota 👇');
+}
+async function setRating(id, n) {
+  const s = myStatus(id) || {}; const v = s.rating === n ? null : n;
+  await patchStatus(id, {rating:v});
+  if (!v) return;
+  const last = DB.activity.filter(a => a.member_id === me && a.item_id === id).sort(byCreated)[0];
+  if (last && ((last.kind === 'status' && (last.data || {}).status === 'done') || last.kind === 'rate') && Date.now() - new Date(last.created_at) < 15 * 60000) put('activity', {...last, data:{...last.data, rating:v}}, true);
+  else log(id, 'rate', {rating:v});
+}
+async function setProg(id, patch) {
+  const s = myStatus(id) || {}; const p = {progress:{...(s.progress || {}), ...patch}};
+  if (!s.status || s.status === 'wishlist' || s.status === 'pending') { p.status = 'doing'; if (!s.started_at) p.started_at = today(); }
+  await patchStatus(id, p);
+}
+async function nextEp(id) {
+  const it = item(id), s = myStatus(id) || {}, p = s.progress || {}, x = it.extra || {};
+  let se = p.season || 1, ep = (p.episode || 0) + 1;
+  if (it.type === 'series' && x.seasons && x.seasons.length) {
+    if (ep > (x.seasons[se - 1] || Infinity)) { if (se < x.seasons.length) { se++; ep = 1; toast(`🎉 Empiezas la temporada ${se}`); } else { ep = x.seasons[se - 1]; toast('¡Has llegado al final! Márcala como vista'); } }
+  }
+  await setProg(id, it.type === 'series' ? {season:se, episode:ep} : {episode:ep});
+}
+async function again(id) {
+  const s = myStatus(id) || {}; const n = (s.times || 1) + 1;
+  await patchStatus(id, {times:n, finished_at:today(), status:'done'});
+  log(id, 'rewatch', {times:n}); toast(`🔁 Contado: ${n} veces`);
+}
+async function toggleTimer(id) {
+  const t = timer();
+  if (t) { await stopTimer(); if (t.item_id === id) return; }
+  LS.set('mt-timer', {item_id:id, member_id:me, start:Date.now()});
+  const s = myStatus(id);
+  if (!s || !s.status || s.status === 'wishlist' || s.status === 'pending') await changeStatus(id, 'doing', true);
+  refresh(); toast('▶ Sesión en marcha. Puedes cerrar la app, sigue contando');
+}
+async function stopTimer() {
+  const t = timer(); if (!t) return; LS.del('mt-timer');
+  let m = Math.round((Date.now() - t.start) / 60000);
+  if (m > 240) { const v = prompt(`La sesión lleva ${fmtMin(m)}. ¿Te olvidaste de pararla? Escribe los minutos que quieres guardar:`, m); if (v === null) { refresh(); return; } m = parseInt(v) || 0; }
+  if (m < 1) { toast('Menos de 1 minuto: no se guarda'); refresh(); return; }
+  await put('sessions', {id:uid(), item_id:t.item_id, member_id:t.member_id, started_at:new Date(t.start).toISOString(), minutes:m, manual:false});
+  toast(`⏱ ${fmtMin(m)} guardados`);
+}
+async function addManual(id) {
+  const m = parseInt($('#mmin').value), d = $('#mdate').value || today();
+  if (!m || m < 1) { toast('Escribe los minutos'); return; }
+  $('#mmin').value = ''; ui.manual = false;
+  await put('sessions', {id:uid(), item_id:id, member_id:me, started_at:new Date(d + 'T12:00:00').toISOString(), minutes:m, manual:true});
+  const s = myStatus(id); if (!s || !s.status || s.status === 'wishlist' || s.status === 'pending') await changeStatus(id, 'doing');
+  toast(`＋ ${fmtMin(m)} añadidos`);
+}
+function renderTimerBar() {
+  const t = timer(), el = $('#timerbar');
+  if (!t || !me || (modal && modal.id === t.item_id)) { el.className = 'hidden'; return; }
+  const it = item(t.item_id);
+  el.className = 'tbar';
+  el.innerHTML = `<div class="tb-l" onclick="openItem('${t.item_id}')"><span class="dot"></span><b>${esc(it ? it.title : 'Sesión')}</b><span class="tclock" data-start="${t.start}">${clock(t.start)}</span></div><button class="btn white sm" onclick="stopTimer()">⏸ Parar</button>`;
+}
+async function recommend(id, to) { await put('recs', {id:uid(), item_id:id, from_id:me, to_id:to, note:null, created_at:now()}); log(id, 'rec', {to}); toast(`💌 Recomendado a ${member(to).name}`); }
+async function addComment(id) {
+  const ta = $('#ctext'), sp = $('#cspoil'); const text = ta.value.trim(); if (!text) { ta.focus(); return; }
+  const spoiler = sp.checked; ta.value = ''; sp.checked = false;
+  await put('comments', {id:uid(), item_id:id, member_id:me, text, spoiler, created_at:now()});
+  log(id, 'comment', {text:text.slice(0, 140), spoiler});
+}
+async function delComment(cid) { if (confirm('¿Borrar este comentario?')) await del('comments', cid); }
+async function patchItem(id, p) { await put('items', {id, ...p}); }
+async function saveEdit(id) {
+  const it = item(id), g = k => { const e = $('#ef-' + k); return e ? e.value.trim() : undefined; };
+  const extra = {...(it.extra || {})};
+  if (g('pages') !== undefined) extra.pages = parseInt(g('pages')) || null;
+  if (g('run') !== undefined) extra.runtime = parseInt(g('run')) || null;
+  if (g('seasons') !== undefined) extra.seasons = g('seasons').split(/[,\s]+/).map(n => parseInt(n)).filter(n => n > 0);
+  extra.url = g('url') || null;
+  if (!g('title')) { toast('El título no puede estar vacío'); return; }
+  await put('items', {id, title:g('title'), subtitle:g('sub') || null, year:parseInt(g('year')) || null, genres:g('gen').split(',').map(s => s.trim()).filter(Boolean), cover:g('cover') || null, description:g('desc') || null, extra});
+  toast('Guardado ✓');
+}
+async function removeItem(id) { const it = item(id); if (!confirm(`¿Eliminar "${it.title}" para todos? Se borrarán también sus notas, comentarios y tiempos.`)) return; closeModal(); await del('items', id); toast('Eliminado'); }
+
+/* ---------- añadir a mano ---------- */
+function openManual() {
+  openHTML(() => `<button class="x" onclick="closeModal()">✕</button><div class="mh"><h2>✏️ Añadir a mano</h2></div><div class="pad"><div class="form">
+    <label>Tipo<select id="mf-type">${Object.entries(TYPES).map(([k, t]) => `<option value="${k}" ${add.type === k ? 'selected' : ''}>${t.e} ${t.n}</option>`).join('')}</select></label>
+    <label>Título<input id="mf-title" data-keep value="${esc(add.q)}"></label>
+    <label>Autor / director / artista<input id="mf-sub" data-keep></label>
+    <label>Año<input id="mf-year" data-keep type="number" inputmode="numeric"></label>
+    <label>Géneros (separados por comas)<input id="mf-gen" data-keep placeholder="Terror, Comedia…"></label>
+    <label>URL de la portada (opcional)<input id="mf-cover" data-keep placeholder="https://…"></label>
+    <label>Estado<select id="mf-st">${ST.map(s => `<option value="${s}">${stLabel(s)}</option>`).join('')}</select></label>
+    <button class="btn red" onclick="saveManual()">Añadir</button></div></div>`);
+}
+async function saveManual() {
+  const v = k => $('#mf-' + k).value.trim(); if (!v('title')) { toast('Falta el título'); return; }
+  await createItem({id:uid(), type:v('type'), title:v('title'), subtitle:v('sub') || null, year:parseInt(v('year')) || null, cover:v('cover') || null, description:null, genres:v('gen').split(',').map(s => s.trim()).filter(Boolean), source:'manual', external_id:null, extra:{}, owned:false, format:null, location:null, created_by:me, created_at:now()}, v('st'));
+}
+
+/* ---------- ACTIVIDAD ---------- */
+function actText(a) {
+  const it = item(a.item_id), d = a.data || {};
+  if (a.kind === 'import') return `importó ${d.count} pelis desde Letterboxd`;
+  if (!it) return '';
+  const t = TYPES[it.type], ti = `<b>${esc(it.title)}</b>`;
+  switch (a.kind) {
+    case 'add': return `añadió ${ti}`;
+    case 'status': return ({wishlist:`quiere ${t.inf} ${ti}`, pending:`tiene pendiente ${ti}`, doing:`ha empezado a ${t.inf} ${ti}`, done:`ha terminado ${ti}`, dropped:`ha abandonado ${ti}`})[d.status] + (d.rating ? ` y le da un <b style="color:var(--gold)">${d.rating}</b>` : '');
+    case 'rate': return `le pone un <b style="color:var(--gold)">${d.rating}</b> a ${ti}`;
+    case 'comment': return `comentó ${ti}: ${d.spoiler ? '⚠️ <i>contiene spoilers</i>' : '“' + esc(d.text) + '”'}`;
+    case 'rec': return `recomienda ${ti} a <b>${esc(member(d.to).name)}</b>`;
+    case 'rewatch': return `ha vuelto a ${t.inf} ${ti} (×${d.times})`;
+  }
+  return '';
+}
+function vFeed() {
+  const acts = [...DB.activity].sort(byCreated).filter(a => actText(a)).slice(0, 200);
+  setTimeout(() => LS.set('mt-seen', now()), 0);
+  return `<div class="pad"><h2 class="h">Actividad</h2>${acts.map(a => { const m = member(a.member_id), it = item(a.item_id);
+    return `<div class="act" ${it ? `onclick="openItem('${it.id}')"` : ''}><span class="av xs" style="background:${m.color}">${m.emoji}</span><div class="at"><b>${esc(m.name)}</b> ${actText(a)}<div class="small muted">${ago(a.created_at)}</div></div>${it ? `<div class="ath ${TYPES[it.type].sq ? 'sq' : ''}">${art(it)}</div>` : ''}</div>`; }).join('') || empty('🔔', 'Sin actividad todavía', 'Aquí veréis lo que hace cada uno.')}</div>`;
+}
+
+/* ---------- ESTADÍSTICAS ---------- */
+function cutoff(p) { const d = new Date(); if (p === 'week') return new Date(Date.now() - 7 * 864e5); if (p === 'month') return new Date(d.getFullYear(), d.getMonth(), 1); if (p === 'year') return new Date(d.getFullYear(), 0, 1); return null; }
+function streaks(mid) {
+  const days = new Set(DB.sessions.filter(s => s.member_id === mid).map(s => dayOf(s.started_at)));
+  let cur = 0, d = new Date(); if (!days.has(today())) d.setDate(d.getDate() - 1);
+  while (days.has(d.toLocaleDateString('sv-SE'))) { cur++; d.setDate(d.getDate() - 1); }
+  const sorted = [...days].sort(); let best = 0, run = 0, prev = null;
+  for (const x of sorted) { const dt = new Date(x + 'T12:00'); run = prev && (dt - prev) / 864e5 < 1.5 ? run + 1 : 1; best = Math.max(best, run); prev = dt; }
+  return {cur, best};
+}
+function bars(list, fmt = v => v) { const max = Math.max(1, ...list.map(x => x[1])); return list.map(([l, v]) => `<div class="bar"><span>${l}</span><div><i style="width:${v / max * 100}%"></i></div><b>${fmt(v)}</b></div>`).join(''); }
+function vStats() {
+  const cut = cutoff(statP), year = String(new Date().getFullYear());
+  const ses = DB.sessions.filter(s => !cut || new Date(s.started_at) >= cut);
+  const mine = ses.filter(s => s.member_id === me);
+  const byType = Object.keys(TYPES).map(k => [TYPES[k].e + ' ' + TYPES[k].p, sum(mine.filter(s => (item(s.item_id) || {}).type === k))]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
+  const myS = DB.statuses.filter(s => s.member_id === me);
+  const doneYear = myS.filter(s => s.status === 'done' && String(s.finished_at || '').startsWith(year));
+  const doneBy = Object.keys(TYPES).map(k => [TYPES[k].e + ' ' + TYPES[k].p, doneYear.filter(s => (item(s.item_id) || {}).type === k).length]).filter(x => x[1]).sort((a, b) => b[1] - a[1]);
+  const gc = {}; myS.filter(s => ['done','doing'].includes(s.status)).forEach(s => ((item(s.item_id) || {}).genres || []).forEach(g => gc[g] = (gc[g] || 0) + 1));
+  const genres = Object.entries(gc).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const pc = {}; myS.filter(s => s.status === 'done').forEach(s => { const it = item(s.item_id); if (it && it.subtitle && it.type !== 'game') it.subtitle.split(/,\s*| — /)[0].split(', ').forEach(n => { if (n) pc[n] = (pc[n] || 0) + 1; }); });
+  const people = Object.entries(pc).filter(x => x[1] > 1).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const rated = myS.filter(s => s.rating); const myAvg = rated.length ? rated.reduce((a, s) => a + s.rating, 0) / rated.length : null;
+  const best = [...rated].sort((a, b) => b.rating - a.rating).slice(0, 10).map(s => item(s.item_id)).filter(Boolean);
+  const st = streaks(me);
+  const days = [...Array(14)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - 13 + i); const k = d.toLocaleDateString('sv-SE'); return [d, sum(DB.sessions.filter(s => s.member_id === me && dayOf(s.started_at) === k))]; });
+  const dmax = Math.max(30, ...days.map(x => x[1]));
+  const compat = DB.members.filter(m => m.id !== me).map(m => { const pairs = rated.map(s => [s.rating, (myStatus(s.item_id, m.id) || {}).rating]).filter(x => x[1]); if (pairs.length < 3) return [m, null, pairs.length]; const diff = pairs.reduce((a, [x, y]) => a + Math.abs(x - y), 0) / pairs.length; return [m, Math.round(100 - diff / 9 * 100), pairs.length]; });
+  const P = [['week','7 días'],['month','Este mes'],['year','Este año'],['all','Siempre']];
+  return `<div class="pad"><h2 class="h">Estadísticas</h2>
+  <div class="chips" style="padding:0 0 12px">${P.map(([k, l]) => chip(l, statP === k, `statP='${k}';renderView()`)).join('')}</div>
+  <div class="cards">
+    <div class="card"><div class="n">${fmtMin(sum(mine))}</div><div class="l">tu tiempo · ${P.find(p => p[0] === statP)[1].toLowerCase()}</div></div>
+    <div class="card"><div class="n">${doneYear.length}</div><div class="l">terminados en ${year}</div></div>
+    <div class="card"><div class="n">🔥 ${st.cur}</div><div class="l">días seguidos (récord ${st.best})</div></div>
+    <div class="card"><div class="n">${myAvg ? '★ ' + myAvg.toFixed(1) : '—'}</div><div class="l">tu nota media (${rated.length} notas)</div></div>
+  </div>
+  <div class="sec"><h3>Últimos 14 días</h3><div class="days">${days.map(([d, v]) => `<div title="${fmtMin(v)}"><i style="height:${v / dmax * 100}%;${v ? '' : 'background:var(--bg3)'}"></i><span>${d.getDate()}</span></div>`).join('')}</div></div>
+  ${byType.length ? `<div class="sec"><h3>Tiempo por tipo</h3>${bars(byType, fmtMin)}</div>` : ''}
+  ${doneBy.length ? `<div class="sec"><h3>Terminados en ${year}</h3>${bars(doneBy)}</div>` : ''}
+  ${genres.length ? `<div class="sec"><h3>Tus géneros favoritos</h3>${bars(genres.map(([g, v]) => [esc(g), v]))}</div>` : ''}
+  ${people.length ? `<div class="sec"><h3>Autores, directores y artistas que más repites</h3>${bars(people.map(([g, v]) => [esc(g), v]))}</div>` : ''}
+  <div class="sec"><h3>El grupo</h3><table class="gt"><tr><th></th><th>Tiempo</th><th>Terminados ${year}</th><th>Nota media</th><th>Racha</th></tr>
+  ${DB.members.map(m => { const ms = DB.statuses.filter(s => s.member_id === m.id); const r = ms.filter(s => s.rating); return `<tr><td>${m.emoji} ${esc(m.name)}</td><td>${fmtMin(sum(ses.filter(s => s.member_id === m.id)))}</td><td>${ms.filter(s => s.status === 'done' && String(s.finished_at || '').startsWith(year)).length}</td><td>${r.length ? (r.reduce((a, s) => a + s.rating, 0) / r.length).toFixed(1) : '—'}</td><td>🔥${streaks(m.id).cur}</td></tr>`; }).join('')}</table></div>
+  <div class="sec"><h3>Compatibilidad de gustos contigo</h3>${compat.map(([m, v, n]) => `<div class="bar"><span>${m.emoji} ${esc(m.name)}</span><div><i style="width:${v || 0}%;background:var(--ok)"></i></div><b>${v == null ? `faltan notas (${n}/3)` : v + '%'}</b></div>`).join('')}<div class="small muted">Según las notas que habéis puesto a lo mismo.</div></div>
+  ${best.length ? `<section class="row" style="margin:18px -16px 0"><h2>Tus mejor puntuados</h2><div class="scroller">${best.map(i => poster(i, {badge:true})).join('')}</div></section>` : ''}
+  </div>`;
+}
+
+/* ---------- RULETA ---------- */
+function rouPool() {
+  const types = {movie:['movie'], series:['series'], screen:['movie','series'], book:['book','audiobook'], game:['game'], all:Object.keys(TYPES)}[rou.type];
+  return DB.items.filter(i => types.includes(i.type) &&
+    DB.statuses.some(s => s.item_id === i.id && ['wishlist','pending'].includes(s.status) && (rou.scope === 'all' || s.member_id === me)) &&
+    !['done','doing'].includes((myStatus(i.id) || {}).status) &&
+    (!rou.genre || (i.genres || []).includes(rou.genre)) &&
+    (!rou.max || !(i.extra || {}).runtime || i.extra.runtime <= +rou.max));
+}
+function openRoulette() { rou.pick = null; openHTML(rouHTML); }
+function rouHTML() {
+  const pool = rouPool();
+  const allG = [...new Set(DB.items.flatMap(i => i.genres || []))].sort((a, b) => a.localeCompare(b, 'es'));
+  const pk = rou.pick && item(rou.pick);
+  return `<button class="x" onclick="closeModal()">✕</button><div class="mh"><h2>🎲 ¿Qué toca hoy?</h2><div class="small muted">Elige al azar entre las wishlist y pendientes</div></div>
+  <div class="rou"><div class="form">
+    <label>Qué<select onchange="rou.type=this.value;rou.pick=null;renderModal()">${[['movie','🎬 Película'],['series','📺 Serie'],['screen','🎬📺 Peli o serie'],['book','📖 Libro'],['game','🎮 Juego'],['all','🎲 Cualquier cosa']].map(([k, l]) => `<option value="${k}" ${rou.type === k ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+    <label>Género<select onchange="rou.genre=this.value;rou.pick=null;renderModal()"><option value="">Cualquiera</option>${allG.map(g => `<option ${rou.genre === g ? 'selected' : ''}>${esc(g)}</option>`).join('')}</select></label>
+    ${['movie','screen'].includes(rou.type) ? `<label>Duración máx.<select onchange="rou.max=this.value;rou.pick=null;renderModal()">${[['','Sin límite'],['100','≤ 1 h 40'],['120','≤ 2 h'],['150','≤ 2 h 30']].map(([k, l]) => `<option value="${k}" ${rou.max === k ? 'selected' : ''}>${l}</option>`).join('')}</select></label>` : ''}
+    <label>De quién<select onchange="rou.scope=this.value;rou.pick=null;renderModal()"><option value="all" ${rou.scope === 'all' ? 'selected' : ''}>Wishlist de todos</option><option value="me" ${rou.scope === 'me' ? 'selected' : ''}>Solo la mía</option></select></label>
+  </div>
+  <div class="rouRes" id="rouRes">${pk ? `<div><div onclick="openItem('${pk.id}')">${poster(pk)}</div><h2 style="margin-top:10px">${esc(pk.title)}</h2><div class="meta">${metaLine(pk)}${extraTxt(pk) ? ' · ' + extraTxt(pk) : ''}</div></div>` : pool.length ? `<div class="muted">${pool.length} opciones en el bombo</div>` : '<div class="muted">No hay nada que cumpla esos filtros.<br>Añade cosas a vuestra wishlist.</div>'}</div>
+  <div style="display:flex;gap:8px">${pool.length ? `<button class="btn red big" onclick="spin()">🎲 ${pk ? 'Otra vez' : 'Girar'}</button>` : ''}${pk ? `<button class="btn white big" onclick="openItem('${pk.id}')">Ver ficha</button>` : ''}</div></div>`;
+}
+function spin() {
+  const pool = rouPool(); if (!pool.length || rou.spinning) return; rou.spinning = true;
+  const el = $('#rouRes'); let n = 0; const steps = 16;
+  const stepFn = () => {
+    if (!rou.spinning) return;
+    const x = pool[Math.floor(Math.random() * pool.length)];
+    if (n++ < steps) { el.innerHTML = `<div class="spin-t">${TYPES[x.type].e} ${esc(x.title)}</div>`; setTimeout(stepFn, 50 + n * 12); }
+    else { rou.pick = x.id; rou.spinning = false; renderModal(); }
+  };
+  stepFn();
+}
+
+/* ---------- PERFIL Y AJUSTES ---------- */
+function vProfile() {
+  const m = member(me);
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent), standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  return `<div class="pad center"><div class="av xl" style="background:${m.color}">${m.emoji}</div><h2>${esc(m.name)}</h2>
+  ${!standalone ? `<div class="demo">📲 <b>Instálala en el móvil:</b> ${isIOS ? 'en Safari pulsa el botón Compartir (cuadrado con flecha) → «Añadir a pantalla de inicio».' : 'en Chrome pulsa ⋮ → «Instalar aplicación» o «Añadir a pantalla de inicio».'}</div>` : ''}
+  <div class="menu">
+    <button onclick="switchProfile()">👥 Cambiar de perfil</button>
+    <button onclick="openHTML(editMeHTML)">🙂 Editar mi nombre y avatar</button>
+    <button onclick="openHTML(keysHTML)">🔑 Claves de búsqueda (TMDB, RAWG)</button>
+    <button onclick="openHTML(importHTML)">📥 Importar desde Letterboxd</button>
+    <button onclick="exportData()">💾 Descargar copia de seguridad</button>
+    ${sb ? '<button onclick="logoutGroup()">🚪 Cerrar sesión del grupo en este dispositivo</button>' : ''}
+  </div>
+  ${!CFG ? `<div class="demo">🧪 <b>Modo demo:</b> los datos de prueba solo se guardan en este dispositivo. Cuando sigáis la guía y conectéis la base de datos, todo se compartirá entre los cuatro. <button class="btn grey sm" style="margin-top:8px" onclick="resetDemo()">Reiniciar demo</button></div>` : ''}
+  <p class="small muted" style="max-width:480px;margin:20px auto;line-height:1.6">${esc(APP)} v1.0 · Pelis y series: TMDB (este producto usa la API de TMDB pero no está avalado ni certificado por TMDB) · Libros: Google Books y Open Library · Música y podcasts: Apple · Juegos: RAWG.</p></div>`;
+}
+function switchProfile() { me = null; LS.del('mt-me'); refresh(); }
+function editMeHTML() {
+  const m = member(me); ui.emo = ui.emo || m.emoji; ui.col = ui.col || m.color;
+  return `<button class="x" onclick="ui.emo=ui.col=null;closeModal()">✕</button><div class="mh"><h2>Mi perfil</h2></div><div class="pad"><div class="form">
+  <label>Nombre<input id="em-name" data-keep value="${esc(m.name)}"></label>
+  <label>Avatar</label><div class="emo">${EMO.map(e => `<button class="${ui.emo === e ? 'on' : ''}" onclick="ui.emo='${e}';renderModal()">${e}</button>`).join('')}</div>
+  <label>Color</label><div class="cols">${COL.map(c => `<button class="${ui.col === c ? 'on' : ''}" style="background:${c}" onclick="ui.col='${c}';renderModal()"></button>`).join('')}</div>
+  <button class="btn red" onclick="saveMe()">Guardar</button></div></div>`;
+}
+async function saveMe() { const n = $('#em-name').value.trim(); if (!n) return; await put('members', {id:me, name:n, emoji:ui.emo, color:ui.col}, true); ui.emo = ui.col = null; closeModal(); toast('Perfil actualizado'); }
+function keysHTML() {
+  return `<button class="x" onclick="closeModal()">✕</button><div class="mh"><h2>🔑 Claves de búsqueda</h2><div class="small muted">Se guardan una vez y sirven para los cuatro.</div></div><div class="pad"><div class="form">
+  <label>TMDB (películas, series y dónde verlas)<input id="k-tmdb" data-keep value="${esc(setting('tmdb_key'))}" placeholder="Clave de la API o token de lectura" autocomplete="off"></label>
+  <div class="small muted">Gratis en themoviedb.org → Ajustes → API. Vale la «Clave de la API» o el «Token de acceso de lectura».</div>
+  <label>RAWG (videojuegos)<input id="k-rawg" data-keep value="${esc(setting('rawg_key'))}" placeholder="Clave de RAWG" autocomplete="off"></label>
+  <div class="small muted">Gratis en rawg.io/apidocs → Get API key.</div>
+  <div class="small muted">Libros, audiolibros, música y podcasts no necesitan clave.</div>
+  <button class="btn red" onclick="saveKeys()">Guardar</button></div></div>`;
+}
+async function saveKeys() { await putMany('settings', [{id:'tmdb_key', value:$('#k-tmdb').value.trim()}, {id:'rawg_key', value:$('#k-rawg').value.trim()}], true); closeModal(); toast('Claves guardadas ✓'); }
+function exportData() {
+  const blob = new Blob([JSON.stringify({app:APP, exported_at:now(), ...Object.fromEntries(T.filter(t => t !== 'settings').map(t => [t, DB[t]]))}, null, 1)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${norm(APP)}-copia-${today()}.json`; document.body.appendChild(a); a.click(); a.remove();
+  toast('Copia descargada');
+}
+async function logoutGroup() { if (!confirm('¿Cerrar la sesión del grupo en este dispositivo?')) return; await sb.auth.signOut(); LS.del('mt-me'); LS.del('mt-cache'); location.reload(); }
+function resetDemo() { if (!confirm('¿Borrar los datos de la demo y empezar de cero?')) return; LS.del('mt-demo'); LS.del('mt-me'); LS.del('mt-timer'); location.reload(); }
+
+/* ---------- LETTERBOXD ---------- */
+function importHTML() {
+  return `<button class="x" onclick="closeModal()">✕</button><div class="mh"><h2>📥 Importar desde Letterboxd</h2></div><div class="pad">
+  <p class="small" style="color:var(--tx2);line-height:1.6">1. En letterboxd.com entra en <b>Settings → Data → Export your data</b>.<br>2. Te descarga un archivo <b>.zip</b>.<br>3. Elígelo aquí (el .zip tal cual, o los archivos watched.csv, ratings.csv, diary.csv y watchlist.csv).<br><br>Se importará en el perfil de <b>${esc(member(me).name)}</b>. Las notas de 0,5 a 5 estrellas se pasan a 1-10.</p>
+  <input type="file" id="lbf" accept=".zip,.csv,text/csv,application/zip" multiple style="width:100%;margin-top:14px">
+  <button class="btn red full" onclick="importLB()">Importar</button><div id="lbmsg" class="small muted" style="margin-top:12px"></div></div>`;
+}
+function parseCSV(txt) {
+  txt = txt.replace(/^﻿/, ''); const rows = []; let row = [], f = '', q = false;
+  for (let i = 0; i < txt.length; i++) { const c = txt[i];
+    if (q) { if (c === '"') { if (txt[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true; else if (c === ',') { row.push(f); f = ''; } else if (c === '\n') { row.push(f); rows.push(row); row = []; f = ''; } else if (c !== '\r') f += c; }
+  if (f || row.length) { row.push(f); rows.push(row); }
+  const [h, ...d] = rows; if (!h) return [];
+  return d.filter(r => r.length > 1).map(r => Object.fromEntries(h.map((k, i) => [k.trim(), (r[i] || '').trim()])));
+}
+async function importLB() {
+  const files = [...($('#lbf').files || [])], msg = $('#lbmsg'); if (!files.length) { toast('Elige el archivo primero'); return; }
+  msg.textContent = 'Leyendo archivos…';
+  const texts = {};
+  try {
+    for (const f of files) {
+      if (/\.zip$/i.test(f.name)) {
+        if (!window.JSZip) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+        const z = await JSZip.loadAsync(f);
+        for (const n of ['watched','ratings','diary','watchlist']) { const e = z.file(new RegExp('(^|/)' + n + '\\.csv$', 'i'))[0]; if (e) texts[n] = await e.async('string'); }
+      } else { const n = (f.name.match(/(watched|ratings|diary|watchlist)/i) || [])[1]; if (n) texts[n.toLowerCase()] = await f.text(); }
+    }
+  } catch (e) { msg.textContent = 'No se pudo leer el archivo: ' + e.message; return; }
+  if (!Object.keys(texts).length) { msg.textContent = 'No encuentro watched.csv, ratings.csv, diary.csv ni watchlist.csv.'; return; }
+  const films = {}, key = r => norm(r.Name) + '|' + (r.Year || '');
+  const F = r => films[key(r)] = films[key(r)] || {name:r.Name, year:parseInt(r.Year) || null, uri:r['Letterboxd URI']};
+  for (const r of parseCSV(texts.watchlist || '')) if (r.Name) F(r).wish = true;
+  for (const r of parseCSV(texts.watched || '')) if (r.Name) { const x = F(r); x.watched = true; x.date = x.date || r.Date; }
+  for (const r of parseCSV(texts.diary || '')) if (r.Name) { const x = F(r); x.watched = true; const d = r['Watched Date'] || r.Date; if (d && (!x.date || d > x.date)) x.date = d; x.times = (x.times || 0) + 1; if (r.Rating) x.rating = +r.Rating; }
+  for (const r of parseCSV(texts.ratings || '')) if (r.Name && r.Rating) { const x = F(r); x.watched = true; x.rating = +r.Rating; x.date = x.date || r.Date; }
+  const items = [], stats = [], list = Object.values(films);
+  for (const f of list) {
+    let it = DB.items.find(i => i.type === 'movie' && norm(i.title) === norm(f.name) && (!i.year || !f.year || Math.abs(i.year - f.year) <= 1)) || items.find(i => norm(i.title) === norm(f.name) && i.year === f.year);
+    if (!it) { it = {id:uid(), type:'movie', title:f.name, subtitle:null, year:f.year, cover:null, description:null, genres:[], source:'letterboxd', external_id:null, extra:{lb:f.uri || null}, owned:false, format:null, location:null, created_by:me, created_at:now()}; items.push(it); }
+    const old = myStatus(it.id) || {id:it.id + '_' + me, item_id:it.id, member_id:me, status:null, rating:null, progress:{}, started_at:null, finished_at:null, times:0};
+    const s = {...old, updated_at:now()};
+    if (f.watched) { if (s.status !== 'done') s.status = 'done'; s.finished_at = s.finished_at || f.date || null; s.times = Math.max(s.times || 0, f.times || 1); }
+    else if (f.wish && !s.status) s.status = 'wishlist';
+    if (f.rating && !s.rating) s.rating = Math.max(1, Math.min(10, Math.round(f.rating * 2)));
+    stats.push(s);
+  }
+  msg.textContent = `Guardando ${list.length} películas…`;
+  await putMany('items', items, true); await putMany('statuses', stats, true);
+  if (list.length) await log(null, 'import', {count:list.length});
+  msg.innerHTML = `✅ ${list.length} películas importadas (${items.length} nuevas).`;
+  toast(`📥 ${list.length} películas importadas`);
+  if (setting('tmdb_key') && items.length) coverPass(items.map(i => i.id), msg);
+  else if (items.length) msg.innerHTML += '<br>Añade la clave de TMDB y vuelve a importar para traer carátulas y géneros.';
+}
+async function coverPass(ids, msg) {
+  let done = 0, batch = [];
+  for (const id of ids) {
+    const it = item(id); if (!it || it.cover) continue;
+    try {
+      const r = await tmdb('/search/movie', it.year ? {query:it.title, year:it.year} : {query:it.title}); const x = (r.results || [])[0];
+      if (x) batch.push({...it, cover:x.poster_path ? 'https://image.tmdb.org/t/p/w342' + x.poster_path : null, description:x.overview || null, genres:(x.genre_ids || []).map(g => TMDB_G[g]).filter(Boolean), source:'tmdb', external_id:String(x.id)});
+    } catch (e) { if (/clave/.test(e.message)) break; }
+    done++; if (msg && document.body.contains(msg)) msg.innerHTML = `🖼️ Buscando carátulas… ${done}/${ids.length}`;
+    if (batch.length >= 40) { await putMany('items', batch, true); batch = []; }
+    await new Promise(r => setTimeout(r, 120));
+  }
+  if (batch.length) await putMany('items', batch, true);
+  if (msg && document.body.contains(msg)) msg.innerHTML = '✅ Importación completa, con carátulas.';
+  refresh();
+}
+
+/* ---------- PERFILES / LOGIN ---------- */
+function renderProfiles() {
+  $('#timerbar').className = 'hidden';
+  if (!DB.members.length) return renderSetup();
+  $('#app').innerHTML = `<div class="who"><div class="logo big">${esc(APP)}</div><h1>¿Quién eres?</h1>
+  <div class="profiles">${DB.members.map(m => `<button class="prof" onclick="pick('${m.id}')"><span class="av lg" style="background:${m.color}">${m.emoji}</span>${esc(m.name)}</button>`).join('')}</div></div>`;
+}
+function pick(id) { me = id; LS.set('mt-me', id); view = 'home'; refresh(); }
+let setupRows = [0,1,2,3].map(i => ({name:'', emoji:EMO[i], color:COL[i]}));
+function renderSetup() {
+  $('#app').innerHTML = `<div class="who"><div class="logo big">${esc(APP)}</div><h1>Crea vuestros 4 perfiles</h1>
+  <div class="setup">${setupRows.map((r, i) => `<div class="sr"><button class="eb" style="background:${r.color}" onclick="cycleEmo(${i})" title="Cambiar avatar">${r.emoji}</button><input placeholder="Nombre ${i + 1}" value="${esc(r.name)}" oninput="setupRows[${i}].name=this.value"></div>`).join('')}
+  <div class="small muted">Toca el avatar para cambiarlo. Después cada uno podrá editar el suyo.</div>
+  <button class="btn red full" onclick="saveSetup()">Empezar</button></div></div>`;
+}
+function cycleEmo(i) { const r = setupRows[i]; r.emoji = EMO[(EMO.indexOf(r.emoji) + 1) % EMO.length]; renderSetup(); }
+async function saveSetup() {
+  const rows = setupRows.filter(r => r.name.trim()).map(r => ({id:uid(), name:r.name.trim(), emoji:r.emoji, color:r.color, created_at:now()}));
+  if (!rows.length) { toast('Escribe al menos un nombre'); return; }
+  await putMany('members', rows, true); renderProfiles();
+}
+function renderLogin() {
+  $('#app').innerHTML = `<div class="who"><div class="logo big">${esc(APP)}</div><h1>Entrar al grupo</h1>
+  <form class="login" onsubmit="event.preventDefault();doLogin(this)"><input name="email" type="email" placeholder="Email del grupo" autocomplete="username" required><input name="pw" type="password" placeholder="Contraseña del grupo" autocomplete="current-password" required><button class="btn red">Entrar</button>
+  <div class="small muted">Solo hace falta la primera vez en cada móvil u ordenador.</div><div id="lerr"></div></form></div>`;
+}
+async function doLogin(f) {
+  const {error} = await sb.auth.signInWithPassword({email:f.email.value.trim(), password:f.pw.value});
+  if (error) { $('#lerr').innerHTML = `<div class="err">No se ha podido entrar: ${esc(error.message === 'Invalid login credentials' ? 'email o contraseña incorrectos' : error.message)}</div>`; return; }
+  $('#app').innerHTML = '<div class="spinner" style="margin-top:40vh"></div>';
+  try { await loadRemote(); subscribe(); } catch (e) { $('#app').innerHTML = `<div class="who"><div class="err">${esc(e.message)}</div></div>`; return; }
+  const saved = LS.get('mt-me', null); me = DB.members.some(m => m.id === saved) ? saved : null; refresh(); setInterval(tick, 1000);
+}
+
+/* ---------- DATOS DE DEMO ---------- */
+function demoSeed() {
+  const ago = (d, h = 20) => { const x = new Date(); x.setDate(x.getDate() - d); x.setHours(h, 0, 0, 0); return x.toISOString(); };
+  const day = d => ago(d).slice(0, 10);
+  const M = [['Ana','🦊',COL[0]],['Pablo','🐻',COL[1]],['Marta','🐱',COL[2]],['Luis','🐼',COL[3]]].map((x, i) => ({id:'m' + i, name:x[0], emoji:x[1], color:x[2], created_at:ago(30)}));
+  const I = [
+    ['movie','Dune: Parte Dos','Denis Villeneuve',2024,['Ciencia ficción','Aventura'],{runtime:166},'Paul Atreides se une a Chani y a los Fremen mientras busca venganza contra quienes destruyeron a su familia.'],
+    ['book','Dune','Frank Herbert',1965,['Ciencia ficción'],{pages:784},'La novela que lo empezó todo: Arrakis, la especia y la casa Atreides.'],
+    ['series','The Bear','Christopher Storer',2022,['Drama','Comedia'],{seasons:[8,10,10,10]},'Un joven chef de alta cocina vuelve a Chicago para hacerse cargo del local de bocadillos de su familia.'],
+    ['book','El infinito en un junco','Irene Vallejo',2019,['Ensayo','Historia'],{pages:452},'Un viaje por la historia de los libros en el mundo antiguo.'],
+    ['game','Hollow Knight','Team Cherry',2017,['Acción','Plataformas'],{},''],
+    ['podcast','Nadie Sabe Nada','Andreu Buenafuente y Berto Romero',2014,['Comedia'],{},''],
+    ['album','Motomami','Rosalía',2022,['Pop','Flamenco'],{tracks:16},''],
+    ['movie','Oppenheimer','Christopher Nolan',2023,['Drama','Historia'],{runtime:180},''],
+    ['series','Severance','Dan Erickson',2022,['Ciencia ficción','Misterio'],{seasons:[9,10]},''],
+    ['movie','Los otros','Alejandro Amenábar',2001,['Terror','Misterio'],{runtime:104},''],
+    ['audiobook','Proyecto Hail Mary','Andy Weir',2021,['Ciencia ficción'],{runtime:970},''],
+    ['movie','Cuando Harry encontró a Sally','Rob Reiner',1989,['Romance','Comedia'],{runtime:96},''],
+    ['movie','La sociedad de la nieve','J. A. Bayona',2023,['Drama'],{runtime:144},''],
+    ['series','Arcane','Christian Linke',2021,['Animación','Ciencia ficción y fantasía'],{seasons:[9,9]},''],
+  ].map((x, i) => ({id:'i' + i, type:x[0], title:x[1], subtitle:x[2], year:x[3], genres:x[4], extra:x[5], description:x[6] || null, cover:null, source:'manual', external_id:null, owned:i === 1 || i === 3 || i === 9, format:i === 9 ? 'Físico' : i === 1 || i === 3 ? 'Físico' : null, location:i === 1 || i === 3 ? 'Estantería salón' : i === 9 ? 'Casa de Marta' : null, created_by:'m' + (i % 4), created_at:ago(20 - i)}));
+  const S = [];
+  const st = (it, m, status, rating, progress, d) => S.push({id:'i' + it + '_m' + m, item_id:'i' + it, member_id:'m' + m, status, rating:rating || null, progress:progress || {}, started_at:d != null ? day(d + 5) : null, finished_at:status === 'done' ? day(d || 1) : null, times:status === 'done' ? 1 : 0, updated_at:ago(d || 0)});
+  st(0,0,'done',9,null,6); st(0,1,'done',8,null,5); st(0,2,'wishlist'); st(0,3,'done',10,null,3);
+  st(1,0,'doing',null,{page:312},0); st(1,1,'done',9,null,40); st(1,3,'wishlist');
+  st(2,0,'doing',null,{season:2,episode:4},1); st(2,2,'done',10,null,9); st(2,1,'doing',null,{season:3,episode:2},0);
+  st(3,2,'doing',null,{page:120},2); st(3,0,'wishlist');
+  st(4,1,'doing',null,{pct:45},0); st(4,3,'done',9,null,12);
+  st(5,0,'doing'); st(5,3,'doing');
+  st(6,2,'done',8,null,15); st(6,0,'done',7,null,14);
+  st(7,0,'wishlist'); st(7,1,'done',8,null,30); st(7,2,'wishlist');
+  st(8,3,'doing',null,{season:1,episode:6},0); st(8,0,'pending');
+  st(9,0,'wishlist'); st(9,2,'done',8,null,60); st(9,1,'wishlist');
+  st(10,1,'doing',null,{minute:340},1); st(10,0,'wishlist');
+  st(11,0,'pending'); st(11,2,'wishlist'); st(12,3,'wishlist'); st(12,0,'wishlist'); st(13,2,'wishlist'); st(13,1,'done',9,null,20);
+  const SE = []; const ss = (it, m, d, min) => SE.push({id:uid(), item_id:'i' + it, member_id:'m' + m, started_at:ago(d, 21), minutes:min, manual:false});
+  ss(1,0,0,35); ss(1,0,1,50); ss(2,0,1,60); ss(1,0,2,25); ss(5,0,3,70); ss(1,0,4,40); ss(0,0,6,166); ss(2,0,8,90); ss(1,0,9,30);
+  ss(4,1,0,120); ss(4,1,1,90); ss(10,1,1,60); ss(2,1,0,30); ss(3,2,2,45); ss(3,2,3,30); ss(8,3,0,100); ss(5,3,2,60);
+  const CM = [{id:uid(), item_id:'i0', member_id:'m3', text:'La escena del gusano de arena en IMAX es lo mejor que he visto en años.', spoiler:false, created_at:ago(3)},
+    {id:uid(), item_id:'i0', member_id:'m1', text:'Lo de Feyd-Rautha al final me dejó loco, no me lo esperaba así.', spoiler:true, created_at:ago(2)},
+    {id:uid(), item_id:'i2', member_id:'m2', text:'El capítulo 7 de la segunda temporada es una obra maestra. Aguantad.', spoiler:false, created_at:ago(8)}];
+  const RC = [{id:uid(), item_id:'i9', from_id:'m2', to_id:'m0', note:null, created_at:ago(1)}, {id:uid(), item_id:'i13', from_id:'m1', to_id:'m0', note:null, created_at:ago(4)}];
+  const A = [];
+  const a = (m, it, kind, data, d, h) => A.push({id:uid(), member_id:'m' + m, item_id:'i' + it, kind, data, created_at:ago(d, h)});
+  a(3,0,'status',{status:'done', rating:10},3,23); a(3,0,'comment',{text:CM[0].text, spoiler:false},3,23); a(1,0,'comment',{text:'', spoiler:true},2,22);
+  a(2,9,'rec',{to:'m0'},1,19); a(1,4,'status',{status:'doing'},5,18); a(3,8,'status',{status:'doing'},2,21); a(2,3,'add',{},6,12); a(1,13,'rec',{to:'m0'},4,10);
+  return {members:M, items:I, statuses:S, sessions:SE, comments:CM, recs:RC, activity:A, settings:[]};
+}
+
+/* ---------- service worker (para instalar y actualizar sola) ---------- */
+if ('serviceWorker' in navigator && CFG && location.protocol === 'https:') {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+boot();
+</script>
+</body>
+</html>
