@@ -1,5 +1,10 @@
 # Maratón · Guía de instalación (gratis, unos 20 minutos)
 
+> **¿Ya la tenéis instalada y venís a actualizar a la v2?** Solo dos pasos:
+> 1. Supabase → **SQL Editor** → New query → pega todo `schema-v2.sql` → **Run**.
+> 2. GitHub → vuestro repositorio → **Add file → Upload files** → sube el `index.html` nuevo (reemplaza al antiguo) → **Commit changes**.
+> En un par de minutos todos tienen la versión nueva al abrir la app.
+
 Solo lo hace **una persona, una vez**. Los otros tres solo tendrán que abrir un enlace e instalarla.
 
 Necesitáis dos cosas gratuitas:
@@ -82,6 +87,16 @@ Quien lo use: en letterboxd.com → **Settings → Data → Export your data**. 
 
 Perfiles de los 4 · inventario común con búsqueda automática (TMDB, Google Books/Open Library, Apple Music/Podcasts, RAWG) o a mano · estados Wishlist → Pendiente → Viendo/Leyendo/Escuchando/Jugando → Terminado → Abandonado · nota 1-10 y media del grupo · comentarios con spoilers ocultos · recomendaciones entre vosotros · temporizador y tiempo manual · progreso (página, temporada/capítulo con «siguiente capítulo», minuto, episodio, %) · fechas automáticas de inicio y fin · contador de relecturas/revisionados · «lo tenemos», formato y ubicación · dónde ver cada peli/serie en España · enlaces a Spotify, iVoox, IMDb, Goodreads · muro de actividad · ruleta «¿qué vemos hoy?» con filtros · estadísticas (tiempo por tipo y periodo, rachas, géneros, autores/directores, comparativa del grupo, compatibilidad de gustos) · importación de Letterboxd · copia de seguridad · funciona sin conexión.
 
-## Próxima fase
+## Novedades de la versión 2
 
-«Ver juntos» con votación · retos anuales con barra de progreso · ranking (desactivable) · resumen anual tipo Wrapped · listas personalizadas (otoño, Navidad…) · citas y notas · préstamos · avisos de estreno de nuevas temporadas · escanear código de barras.
+- **🍿 Ver juntos**: botón de palomitas arriba. Proponéis títulos desde su ficha, cada uno vota «Me apunto», el más votado sale con corona y «La vimos» lo marca como visto para todos los que votaron.
+- **🎯 Retos anuales** (Estadísticas): «24 libros en 2026», con barra y aviso de si vas por delante o por detrás del ritmo.
+- **🏆 Ranking** del grupo: tiempo, terminados y racha. Se desactiva desde el perfil.
+- **🎁 Tu año en Maratón**: resumen tipo Wrapped en Estadísticas, en formato historias.
+- **Listas compartidas** (otoño, Navidad…): se crean desde la Biblioteca o la ficha y salen como filas en Inicio.
+- **📝 Citas y notas** en cada ficha, y todas juntas desde el perfil.
+- **📤 Préstamos**: en la ficha de lo que tenéis. Aviso en Inicio si algo lleva más de 30 días fuera.
+- **📅 Próximos estrenos**: la app revisa las series que seguís (cada 12 h, al abrirla) y avisa en Actividad cuando sale una temporada nueva.
+- **📷 Escanear ISBN** al añadir libros: con la cámara o con una foto del código.
+
+Sobre los avisos de estreno: aparecen dentro de la app (fila en Inicio y muro de Actividad). Las notificaciones al móvil con la app cerrada necesitan un servidor que las envíe; se puede montar gratis más adelante si os interesa.
