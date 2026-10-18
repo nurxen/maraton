@@ -5,6 +5,6 @@
 // ============================================================
 window.APP_CONFIG = {
   appName: 'Maratón',                          // podéis cambiar el nombre
-  supabaseUrl: 'PEGA_AQUI_LA_PROJECT_URL',     // ej: https://abcdxyz.supabase.co
-  supabaseKey: 'PEGA_AQUI_LA_ANON_KEY'         // la clave "anon public" o "publishable"
+  supabaseUrl: 'https://jjsjxgataaqdlbwudzlf.supabase.co',     // ej: https://abcdxyz.supabase.co
+  supabaseKey: 'sb_publishable_WJwjfSr01a40HQ0bfiWUbA_O-php79n'         // la clave "anon public" o "publishable"
 };
