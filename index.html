@@ -301,6 +301,14 @@ table.gt td{padding:8px 4px;border-top:1px solid var(--line);text-align:right;fo
 .w-hint{text-align:center;font-size:12px;opacity:.6}
 @keyframes wIn{from{opacity:0;transform:translateY(14px)}}
 @media (prefers-reduced-motion:reduce){.w-c,.sheet{animation:none}}
+[hidden]{display:none!important}
+.scope{display:flex;background:var(--bg3);border-radius:10px;padding:3px;margin:0 16px 14px;gap:3px}
+.scope button{flex:1;border:0;background:none;padding:9px 6px;border-radius:8px;font-size:14px;color:var(--tx2)}
+.scope button.on{background:#fff;color:#000;font-weight:700}
+.tb ~ .lock{left:32px}
+.lock{position:absolute;left:5px;top:5px;font-size:11px;background:rgba(0,0,0,.7);border-radius:4px;padding:1px 4px}
+.privtag{display:inline-block;font-size:11px;font-weight:700;background:var(--bg4);color:var(--tx2);border-radius:4px;padding:2px 6px;margin-left:6px;letter-spacing:0;text-transform:none}
+.privbox{background:var(--bg2);border-radius:8px;padding:11px 12px;margin-top:16px}
 #toast{position:fixed;left:50%;bottom:calc(140px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#fff;color:#000;padding:10px 16px;border-radius:8px;font-size:14px;font-weight:600;z-index:60;opacity:0;pointer-events:none;transition:.25s;max-width:90vw;text-align:center}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
@@ -325,10 +333,19 @@ const T = ['members','items','statuses','sessions','comments','recs','activity',
 const OPT = ['lists','list_items','quotes','loans','challenges','together','votes'];
 const REL = ['statuses','sessions','comments','recs','activity','list_items','quotes','loans','together','votes'];
 let missing = [];
+let scope = LS0('mt-scope', 'all');
+function LS0(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
+const isPriv = it => !!(it && it.extra && it.extra.private);
+const isMine = it => !!it && (it.created_by === me || !!(myStatus(it.id) || {}).status);
+const vis = it => !!it && (!isPriv(it) || isMine(it));
+const inScope = it => vis(it) && (scope === 'all' || isMine(it));
+function setScope(v) { scope = v; LS.set('mt-scope', v); renderView(); }
+function scopeToggle() { return `<div class="scope"><button class="${scope === 'all' ? 'on' : ''}" onclick="setScope('all')">👥 Biblioteca común</button><button class="${scope === 'mine' ? 'on' : ''}" onclick="setScope('mine')">🙂 Mi biblioteca</button></div>`; }
+const VERB = {movie:'Pelis por ver', series:'Series por ver', book:'Libros por leer', audiobook:'Audiolibros por escuchar', podcast:'Podcasts por escuchar', album:'Discos por escuchar', artist:'Artistas por descubrir', song:'Canciones por escuchar', game:'Juegos por jugar'};
 let DB = Object.fromEntries(T.map(t => [t, []]));
 let sb = null, me = null, view = 'home', modal = null, ui = {manual:false};
 let lib = {type:'all', status:'all', q:'', sort:'recent', owned:false, genre:'', list:''};
-let add = {type:'movie', q:'', res:null, loading:false, err:''};
+let add = {type:'movie', q:'', res:null, loading:false, err:'', priv:LS0('mt-priv', false)};
 let statP = 'month';
 let rou = {type:'movie', genre:'', max:'', scope:'all', pick:null, spinning:false};
 
@@ -501,7 +518,7 @@ function renderView() {
 }
 function nav() {
   const seen = LS.get('mt-seen', '');
-  const unread = DB.activity.filter(a => a.member_id !== me && String(a.created_at) > seen).length;
+  const unread = DB.activity.filter(a => a.member_id !== me && String(a.created_at) > seen && (!a.item_id || vis(item(a.item_id)))).length;
   const b = (v, ic, l, cls = '') => `<button class="${view === v ? 'on' : ''} ${cls}" onclick="go('${v}')"><span class="ic">${ic}</span>${l}${v === 'feed' && unread && view !== 'feed' ? `<span class="badge">${unread > 99 ? '99+' : unread}</span>` : ''}</button>`;
   return `<nav class="tabs">${b('home','🏠','Inicio')}${b('library','📚','Biblioteca')}${b('add','＋','Añadir','add')}${b('feed','🔔','Actividad')}${b('stats','📊','Estadísticas')}</nav>`;
 }
@@ -538,27 +555,29 @@ function poster(it, o = {}) {
     ${s && s.rating ? `<span class="rt">★ ${s.rating}</span>` : ''}
     ${p != null && s && s.status === 'doing' ? `<div class="pb"><i style="width:${p}%"></i></div>` : ''}
     ${timerFor(it.id) ? '<span class="live">● EN CURSO</span>' : ''}
-    ${activeLoan(it.id) ? '<span class="loan">PRESTADO</span>' : ''}
+    ${activeLoan(it.id) ? '<span class="loan">PRESTADO</span>' : isPriv(it) ? '<span class="lock">🔒</span>' : ''}
     ${o.cap ? `<div class="cap">${esc(it.title)}</div>${o.cap2 ? `<div class="cap2">${o.cap2}</div>` : ''}` : ''}</div>`;
 }
 function row(title, items, o = {}) {
+  items = items.filter(o.all ? vis : inScope);
   if (!items.length) return '';
   return `<section class="row"><h2>${title}${o.sub ? ` <small>${o.sub}</small>` : ''}</h2><div class="scroller">${items.slice(0, 30).map(i => poster(i, {badge: o.badge !== false})).join('')}</div></section>`;
 }
 const uniq = a => { const s = new Set(); return a.filter(x => x && !s.has(x.id) && s.add(x.id)); };
-function capRow(title, list, capFn) { if (!list.length) return ''; return `<section class="row"><h2>${title}</h2><div class="scroller">${list.slice(0, 30).map(i => poster(i, {cap:1, cap2:esc(capFn(i))})).join('')}</div></section>`; }
+function capRow(title, list, capFn) { list = list.filter(inScope); if (!list.length) return ''; return `<section class="row"><h2>${title}</h2><div class="scroller">${list.slice(0, 30).map(i => poster(i, {cap:1, cap2:esc(capFn(i))})).join('')}</div></section>`; }
 function empty(e, t, d, btn) { return `<div class="empty"><div class="e">${e}</div><b>${t}</b>${d}${btn ? `<div style="margin-top:18px">${btn}</div>` : ''}</div>`; }
 
 /* ---------- INICIO ---------- */
 function vHome() {
-  if (!DB.items.length) return `<div style="height:40px"></div>` + empty('🍿', 'Vuestra biblioteca está vacía', 'Añade la primera peli, serie, libro, disco, podcast o juego.', `<button class="btn red" onclick="go('add')">＋ Añadir algo</button>`);
+  if (!DB.items.filter(vis).length) return `<div style="height:40px"></div>` + empty('🍿', 'Vuestra biblioteca está vacía', 'Añade la primera peli, serie, libro, disco, podcast o juego.', `<button class="btn red" onclick="go('add')">＋ Añadir algo</button>`);
   const mine = DB.statuses.filter(s => s.member_id === me);
   const doing = uniq(mine.filter(s => s.status === 'doing').sort(byUpd).map(s => item(s.item_id)));
   const recs = uniq([...DB.recs].filter(r => r.to_id === me).sort(byCreated).map(r => item(r.item_id)).filter(i => i && !['done','dropped'].includes((myStatus(i.id) || {}).status)));
   const wish = uniq(mine.filter(s => s.status === 'wishlist' || s.status === 'pending').sort(byUpd).map(s => item(s.item_id)));
   const group = uniq(DB.statuses.filter(s => s.member_id !== me && s.status === 'doing').sort(byUpd).map(s => item(s.item_id)));
   const top = DB.items.map(i => [i, avg(i.id)]).filter(x => x[1] >= 8).sort((a, b) => b[1] - a[1]).map(x => x[0]);
-  const recent = [...DB.items].sort(byCreated);
+  const recent = DB.items.filter(vis).sort(byCreated);
+  const wishRows = Object.keys(TYPES).map(k => row(TYPES[k].e + ' ' + VERB[k], wish.filter(i => i.type === k), {all:true, badge:false})).join('');
   const loansAct = DB.loans.filter(l => !l.returned_at && item(l.item_id));
   const lent = uniq(loansAct.map(l => item(l.item_id)));
   const late = loansAct.filter(l => daysSince(l.since) > LOAN_DAYS);
@@ -577,11 +596,12 @@ function vHome() {
     <button class="btn grey" onclick="openItem('${heroIt.id}')">ⓘ Más info</button></div></div></div></div>
     ${missing.length ? `<div class="alert err2">⚠️ Para usar las funciones nuevas falta actualizar la base de datos: ejecuta <b>schema-v2.sql</b> en Supabase → SQL Editor.</div>` : ''}
     ${late.map(l => `<div class="alert" onclick="openItem('${l.item_id}')">⏰ <b>${esc(item(l.item_id).title)}</b> lleva ${daysSince(l.since)} días prestado a ${esc(l.borrower)}</div>`).join('')}
-    ${row('Continuar', doing)}
-    ${row('💌 Te recomiendan', recs)}
-    ${row('🍿 Para ver juntos', tog)}
+    ${scopeToggle()}
+    ${row('Continuar', doing, {all:true})}
+    ${row('💌 Te recomiendan', recs, {all:true})}
+    ${row('🍿 Para ver juntos', tog, {all:true})}
     ${capRow('📅 Próximos estrenos', upcoming, i => 'T' + i.extra.next.s + ' E' + i.extra.next.e + ' · ' + fmtDay(i.extra.next.date))}
-    ${row('Tu wishlist', wish)}
+    ${wishRows}
     ${row('📤 Prestados', lent)}
     ${row('Lo que está viendo el grupo', group)}
     ${row('⭐ Lo mejor según el grupo', top, {sub:'nota media 8 o más'})}
@@ -595,7 +615,7 @@ function setLib(k, v) { lib[k] = v; if (k === 'type') lib.genre = ''; renderView
 const chip = (l, on, fn) => `<button class="chip ${on ? 'on' : ''}" onclick="${fn}">${l}</button>`;
 function libItems() {
   const q = norm(lib.q);
-  let a = DB.items.filter(i =>
+  let a = DB.items.filter(i => inScope(i) &&
     (lib.type === 'all' || i.type === lib.type) &&
     (!q || norm(i.title + ' ' + (i.subtitle || '') + ' ' + (i.location || '') + ' ' + (i.genres || []).join(' ')).includes(q)) &&
     (!lib.owned || i.owned) &&
@@ -612,9 +632,9 @@ function libItems() {
   return a.sort(srt);
 }
 function vLibrary() {
-  const pool = DB.items.filter(i => lib.type === 'all' || i.type === lib.type);
+  const pool = DB.items.filter(i => inScope(i) && (lib.type === 'all' || i.type === lib.type));
   const genres = [...new Set(pool.flatMap(i => i.genres || []))].sort((a, b) => a.localeCompare(b, 'es'));
-  return `<div class="pad"><input id="q" class="search" type="search" placeholder="Buscar título, autor, género, ubicación…" value="${esc(lib.q)}" oninput="lib.q=this.value;renderGrid()"></div>
+  return `${scopeToggle()}<div class="pad"><input id="q" class="search" type="search" placeholder="Buscar título, autor, género, ubicación…" value="${esc(lib.q)}" oninput="lib.q=this.value;renderGrid()"></div>
   <div class="chips">${chip('Todo', lib.type === 'all', "setLib('type','all')")}${Object.entries(TYPES).map(([k, t]) => chip(t.e + ' ' + t.p, lib.type === k, `setLib('type','${k}')`)).join('')}</div>
   <div class="chips">${[['all','Cualquier estado'],['none','Sin estado'], ...ST.map(s => [s, stLabel(s)])].map(([k, l]) => chip(l, lib.status === k, `setLib('status','${k}')`)).join('')}</div>
   ${listChips()}
@@ -626,7 +646,7 @@ function vLibrary() {
 }
 function gridHTML() {
   const a = libItems();
-  if (!a.length) return empty('🔎', 'Nada por aquí', DB.items.length ? 'Prueba con otros filtros.' : 'Aún no habéis añadido nada.', `<button class="btn red" onclick="go('add')">＋ Añadir</button>`);
+  if (!a.length) return empty('🔎', 'Nada por aquí', DB.items.length ? (scope === 'mine' ? 'En tu biblioteca no hay nada con estos filtros. Prueba con «Biblioteca común».' : 'Prueba con otros filtros.') : 'Aún no habéis añadido nada.', `<button class="btn red" onclick="go('add')">＋ Añadir</button>`);
   return `<div class="count">${a.length} ${a.length === 1 ? 'título' : 'títulos'}</div><div class="grid">${a.map(i => poster(i, {badge: lib.type === 'all', cap:1, cap2: esc(i.owned && i.location ? '📍 ' + i.location : [i.year, i.subtitle].filter(Boolean).join(' · '))})).join('')}</div>`;
 }
 function renderGrid() { const g = $('#grid'); if (g) g.innerHTML = gridHTML(); }
@@ -636,6 +656,7 @@ const HINTS = {movie:'Título de la película', series:'Título de la serie', bo
 function vAdd() {
   return `<div class="pad"><h2 class="h">Añadir</h2>
   <div class="types">${Object.entries(TYPES).map(([k, t]) => `<button class="tt ${add.type === k ? 'on' : ''}" onclick="add.type='${k}';add.res=null;add.err='';renderView()"><span>${t.e}</span>${t.n}</button>`).join('')}</div>
+  <label class="tog" style="margin-top:14px"><input type="checkbox" ${add.priv ? 'checked' : ''} onchange="add.priv=this.checked;LS.set('mt-priv',this.checked)"> 🔒 Añadir como privado (solo lo verás tú)</label>
   <form class="sbar" onsubmit="event.preventDefault();doSearch(this.q.value)"><input name="q" class="search" type="search" placeholder="${HINTS[add.type]}" value="${esc(add.q)}" autocomplete="off" enterkeyhint="search"><button class="btn red">Buscar</button></form>
   ${['book','audiobook'].includes(add.type) ? '<button class="btn grey full" style="margin:4px 0 8px" onclick="openScanner()">📷 Escanear código de barras (ISBN)</button>' : ''}
   <div id="results">${resultsHTML()}</div>
@@ -647,7 +668,7 @@ function resultsHTML() {
   if (!add.res) return '';
   if (!add.res.length) return '<div class="empty" style="padding:24px">Sin resultados. Prueba con otras palabras o añádelo a mano.</div>';
   return add.res.map((r, i) => {
-    const ex = DB.items.find(x => x.type === r.type && ((r.external_id && x.external_id === r.external_id && x.source === r.source) || (norm(x.title) === norm(r.title) && (!x.year || !r.year || x.year === r.year))));
+    const ex = DB.items.find(x => vis(x) && x.type === r.type && ((r.external_id && x.external_id === r.external_id && x.source === r.source) || (norm(x.title) === norm(r.title) && (!x.year || !r.year || x.year === r.year))));
     return `<div class="res"><div class="thumb ${TYPES[r.type].sq ? 'sq' : ''}">${art(r)}</div><div class="rt-txt"><b>${esc(r.title)}</b><div class="sub">${esc([r.year, r.subtitle].filter(Boolean).join(' · '))}</div></div>
     ${ex ? `<button class="btn grey sm" onclick="openItem('${ex.id}')">Ya está ✓</button>` : `<button class="btn red sm" id="ab${i}" onclick="addResult(${i})">＋ Añadir</button>`}</div>`;
   }).join('');
@@ -716,6 +737,7 @@ async function addResult(i) {
   const b = $('#ab' + i); if (b) { b.disabled = true; b.textContent = 'Añadiendo…'; }
   const r = await enrich({...add.res[i]});
   const it = {id:uid(), ...r, owned:false, format:null, location:null, created_by:me, created_at:now()};
+  if (add.priv) it.extra = {...(it.extra || {}), private:true};
   await createItem(it);
 }
 async function createItem(it, status = 'wishlist') {
@@ -787,7 +809,7 @@ function itemHTML(id) {
   return `<button class="x" onclick="closeModal()" aria-label="Cerrar">✕</button>
   <div class="dh" style="${it.cover ? `--bgimg:url(${cssUrl(it.cover)})` : ''}"><div class="hero-bg"></div>
     <div class="dh-in"><div class="dcover ${t.sq ? 'sq' : ''}">${art(it)}</div>
-    <div style="min-width:0"><div class="kicker">${t.e} ${t.n}</div><h1>${esc(it.title)}</h1>
+    <div style="min-width:0"><div class="kicker">${t.e} ${t.n}${isPriv(it) ? '<span class="privtag">🔒 Privado</span>' : ''}</div><h1>${esc(it.title)}</h1>
     <div class="meta">${esc([it.subtitle, it.year, extraTxt(it)].filter(Boolean).join(' · '))}</div>
     ${a ? `<div class="avg">★ ${a.toFixed(1)} <small>media del grupo</small></div>` : ''}</div></div></div>
   <div class="dbody">
@@ -805,6 +827,7 @@ function itemHTML(id) {
     <div class="dates"><label>Empezado<input type="date" value="${s.started_at || ''}" onchange="patchStatus('${id}',{started_at:this.value||null})"></label>
     <label>Terminado<input type="date" value="${s.finished_at || ''}" onchange="patchStatus('${id}',{finished_at:this.value||null})"></label></div>
     <div class="again"><span>${s.times ? `Completado ${s.times} ${s.times === 1 ? 'vez' : 'veces'}` : 'Aún sin completar'}</span>${s.times ? `<button class="btn grey sm" onclick="again('${id}')">🔁 Otra vez</button>` : ''}</div>
+    ${privHTML(it)}
 
     ${it.description ? `<h3>Sinopsis</h3><p class="desc clamp" onclick="this.classList.toggle('clamp')">${esc(it.description)}</p>` : ''}
     ${(it.genres || []).length ? `<div class="gen">${it.genres.map(g => `<span>${esc(g)}</span>`).join('')}</div>` : ''}
@@ -815,8 +838,8 @@ function itemHTML(id) {
     <div class="grp">${DB.members.map(m => { const y = myStatus(id, m.id) || {}; const mm = sum(ses.filter(z => z.member_id === m.id));
       return `<div class="gm"><span class="av xs" style="background:${m.color}">${m.emoji}</span><b>${esc(m.name)}</b><span class="muted">${y.status ? stLabel(y.status, it.type) : '—'}${y.times > 1 ? ' ×' + y.times : ''}${mm ? ' · ' + fmtMin(mm) : ''}</span>${y.rating ? `<span class="rt2">★ ${y.rating}</span>` : ''}</div>`; }).join('')}</div>
 
-    <h3>Recomendar a</h3>
-    <div class="recb">${others.map(m => { const done = DB.recs.some(r => r.item_id === id && r.from_id === me && r.to_id === m.id);
+    <h3 ${isPriv(it) ? 'hidden' : ''}>Recomendar a</h3>
+    <div class="recb" ${isPriv(it) ? 'hidden' : ''}>${others.map(m => { const done = DB.recs.some(r => r.item_id === id && r.from_id === me && r.to_id === m.id);
       return `<button class="btn grey sm" ${done ? 'disabled' : ''} onclick="recommend('${id}','${m.id}')">${m.emoji} ${esc(m.name)}${done ? ' ✓' : ''}</button>`; }).join('')}</div>
     ${togetherBtn(id)}
     <h3>Listas</h3><div class="recb">${listToggles(id)}</div>
@@ -968,12 +991,13 @@ function openManual() {
     <label>Año<input id="mf-year" data-keep type="number" inputmode="numeric"></label>
     <label>Géneros (separados por comas)<input id="mf-gen" data-keep placeholder="Terror, Comedia…"></label>
     <label>URL de la portada (opcional)<input id="mf-cover" data-keep placeholder="https://…"></label>
+    <label class="tog"><input type="checkbox" id="mf-priv" ${add.priv ? 'checked' : ''}> 🔒 Privado (solo lo verás tú)</label>
     <label>Estado<select id="mf-st">${ST.map(s => `<option value="${s}">${stLabel(s)}</option>`).join('')}</select></label>
     <button class="btn red" onclick="saveManual()">Añadir</button></div></div>`);
 }
 async function saveManual() {
   const v = k => $('#mf-' + k).value.trim(); if (!v('title')) { toast('Falta el título'); return; }
-  await createItem({id:uid(), type:v('type'), title:v('title'), subtitle:v('sub') || null, year:parseInt(v('year')) || null, cover:v('cover') || null, description:null, genres:v('gen').split(',').map(s => s.trim()).filter(Boolean), source:'manual', external_id:null, extra:{}, owned:false, format:null, location:null, created_by:me, created_at:now()}, v('st'));
+  await createItem({id:uid(), type:v('type'), title:v('title'), subtitle:v('sub') || null, year:parseInt(v('year')) || null, cover:v('cover') || null, description:null, genres:v('gen').split(',').map(s => s.trim()).filter(Boolean), source:'manual', external_id:null, extra:$('#mf-priv').checked ? {private:true} : {}, owned:false, format:null, location:null, created_by:me, created_at:now()}, v('st'));
 }
 
 /* ---------- ACTIVIDAD ---------- */
@@ -1000,7 +1024,7 @@ function actText(a) {
   return '';
 }
 function vFeed() {
-  const acts = [...DB.activity].sort(byCreated).filter(a => actText(a)).slice(0, 200);
+  const acts = [...DB.activity].sort(byCreated).filter(a => (!a.item_id || vis(item(a.item_id))) && actText(a)).slice(0, 200);
   setTimeout(() => LS.set('mt-seen', now()), 0);
   return `<div class="pad"><h2 class="h">Actividad</h2>${acts.map(a => { const m = member(a.member_id), it = item(a.item_id);
     return `<div class="act" ${it ? `onclick="openItem('${it.id}')"` : ''}>${a.kind === 'newseason' ? '<span class="av xs" style="background:#333">📢</span><div class="at">' : `<span class="av xs" style="background:${m.color}">${m.emoji}</span><div class="at"><b>${esc(m.name)}</b> `}${actText(a)}<div class="small muted">${ago(a.created_at)}</div></div>${it ? `<div class="ath ${TYPES[it.type].sq ? 'sq' : ''}">${art(it)}</div>` : ''}</div>`; }).join('') || empty('🔔', 'Sin actividad todavía', 'Aquí veréis lo que hace cada uno.')}</div>`;
@@ -1062,7 +1086,7 @@ function vStats() {
 /* ---------- RULETA ---------- */
 function rouPool() {
   const types = {movie:['movie'], series:['series'], screen:['movie','series'], book:['book','audiobook'], game:['game'], all:Object.keys(TYPES)}[rou.type];
-  return DB.items.filter(i => types.includes(i.type) &&
+  return DB.items.filter(i => vis(i) && types.includes(i.type) &&
     DB.statuses.some(s => s.item_id === i.id && ['wishlist','pending'].includes(s.status) && (rou.scope === 'all' || s.member_id === me)) &&
     !['done','doing'].includes((myStatus(i.id) || {}).status) &&
     (!rou.genre || (i.genres || []).includes(rou.genre)) &&
@@ -1107,6 +1131,7 @@ function vProfile() {
     <button onclick="openHTML(editMeHTML)">🙂 Editar mi nombre y avatar</button>
     <button onclick="openHTML(keysHTML)">🔑 Claves de búsqueda (TMDB, RAWG)</button>
     <button onclick="openHTML(importHTML)">📥 Importar desde Letterboxd</button>
+    ${lbMine().length ? '<button onclick="openHTML(lbPrivHTML)">🔒 Privacidad de mis pelis de Letterboxd</button>' : ''}
     <button onclick="openHTML(allQuotesHTML)">📝 Citas y notas del grupo</button>
     <button onclick="toggleRanking()">🏆 Ranking en estadísticas: <b>${setting('ranking') === 'off' ? 'desactivado' : 'activado'}</b></button>
     <button onclick="checkReleases(true)">📅 Buscar estrenos de series ahora</button>
@@ -1114,7 +1139,7 @@ function vProfile() {
     ${sb ? '<button onclick="logoutGroup()">🚪 Cerrar sesión del grupo en este dispositivo</button>' : ''}
   </div>
   ${!CFG ? `<div class="demo">🧪 <b>Modo demo:</b> los datos de prueba solo se guardan en este dispositivo. Cuando sigáis la guía y conectéis la base de datos, todo se compartirá entre los cuatro. <button class="btn grey sm" style="margin-top:8px" onclick="resetDemo()">Reiniciar demo</button></div>` : ''}
-  <p class="small muted" style="max-width:480px;margin:20px auto;line-height:1.6">${esc(APP)} v2.0 · Pelis y series: TMDB (este producto usa la API de TMDB pero no está avalado ni certificado por TMDB) · Libros: Google Books y Open Library · Música y podcasts: Apple · Juegos: RAWG.</p></div>`;
+  <p class="small muted" style="max-width:480px;margin:20px auto;line-height:1.6">${esc(APP)} v2.1 · Pelis y series: TMDB (este producto usa la API de TMDB pero no está avalado ni certificado por TMDB) · Libros: Google Books y Open Library · Música y podcasts: Apple · Juegos: RAWG.</p></div>`;
 }
 function switchProfile() { me = null; LS.del('mt-me'); refresh(); }
 function editMeHTML() {
@@ -1148,6 +1173,7 @@ function resetDemo() { if (!confirm('¿Borrar los datos de la demo y empezar de 
 function importHTML() {
   return `<button class="x" onclick="closeModal()">✕</button><div class="mh"><h2>📥 Importar desde Letterboxd</h2></div><div class="pad">
   <p class="small" style="color:var(--tx2);line-height:1.6">1. En letterboxd.com entra en <b>Settings → Data → Export your data</b>.<br>2. Te descarga un archivo <b>.zip</b>.<br>3. Elígelo aquí (el .zip tal cual, o los archivos watched.csv, ratings.csv, diary.csv y watchlist.csv).<br><br>Se importará en el perfil de <b>${esc(member(me).name)}</b>. Las notas de 0,5 a 5 estrellas se pasan a 1-10.</p>
+  <label class="tog" style="margin-top:14px"><input type="checkbox" id="lb-priv"> 🔒 Importar como privadas (el resto del grupo no las verá)</label>
   <input type="file" id="lbf" accept=".zip,.csv,text/csv,application/zip" multiple style="width:100%;margin-top:14px">
   <button class="btn red full" onclick="importLB()">Importar</button><div id="lbmsg" class="small muted" style="margin-top:12px"></div></div>`;
 }
@@ -1180,10 +1206,10 @@ async function importLB() {
   for (const r of parseCSV(texts.watched || '')) if (r.Name) { const x = F(r); x.watched = true; x.date = x.date || r.Date; }
   for (const r of parseCSV(texts.diary || '')) if (r.Name) { const x = F(r); x.watched = true; const d = r['Watched Date'] || r.Date; if (d && (!x.date || d > x.date)) x.date = d; x.times = (x.times || 0) + 1; if (r.Rating) x.rating = +r.Rating; }
   for (const r of parseCSV(texts.ratings || '')) if (r.Name && r.Rating) { const x = F(r); x.watched = true; x.rating = +r.Rating; x.date = x.date || r.Date; }
-  const items = [], stats = [], list = Object.values(films);
+  const items = [], stats = [], list = Object.values(films), lbPriv = !!($('#lb-priv') || {}).checked;
   for (const f of list) {
-    let it = DB.items.find(i => i.type === 'movie' && norm(i.title) === norm(f.name) && (!i.year || !f.year || Math.abs(i.year - f.year) <= 1)) || items.find(i => norm(i.title) === norm(f.name) && i.year === f.year);
-    if (!it) { it = {id:uid(), type:'movie', title:f.name, subtitle:null, year:f.year, cover:null, description:null, genres:[], source:'letterboxd', external_id:null, extra:{lb:f.uri || null}, owned:false, format:null, location:null, created_by:me, created_at:now()}; items.push(it); }
+    let it = DB.items.find(i => vis(i) && i.type === 'movie' && norm(i.title) === norm(f.name) && (!i.year || !f.year || Math.abs(i.year - f.year) <= 1)) || items.find(i => norm(i.title) === norm(f.name) && i.year === f.year);
+    if (!it) { it = {id:uid(), type:'movie', title:f.name, subtitle:null, year:f.year, cover:null, description:null, genres:[], source:'letterboxd', external_id:null, extra:lbPriv ? {lb:f.uri || null, private:true} : {lb:f.uri || null}, owned:false, format:null, location:null, created_by:me, created_at:now()}; items.push(it); }
     const old = myStatus(it.id) || {id:it.id + '_' + me, item_id:it.id, member_id:me, status:null, rating:null, progress:{}, started_at:null, finished_at:null, times:0};
     const s = {...old, updated_at:now()};
     if (f.watched) { if (s.status !== 'done') s.status = 'done'; s.finished_at = s.finished_at || f.date || null; s.times = Math.max(s.times || 0, f.times || 1); }
@@ -1269,7 +1295,7 @@ async function addQuote(id) {
 }
 async function delQuote(id) { if (confirm('¿Borrar esta cita?')) await del('quotes', id); }
 function allQuotesHTML() {
-  const qs = [...DB.quotes].sort(byCreated);
+  const qs = [...DB.quotes].filter(q => vis(item(q.item_id))).sort(byCreated);
   return `<button class="x" onclick="closeModal()">✕</button><div class="mh"><h2>📝 Citas y notas</h2><div class="small muted">${qs.length} guardadas por el grupo</div></div><div class="pad">${qs.map(q => quoteCard(q, true)).join('') || empty('📝', 'Todavía no hay citas', 'Guárdalas desde la ficha de cualquier libro, peli o serie.')}</div>`;
 }
 
@@ -1340,10 +1366,11 @@ async function toggleRanking() { await put('settings', {id:'ranking', value:sett
 
 /* ---------- VER JUNTOS ---------- */
 function togetherList() {
-  return DB.together.map(t => ({t, it:item(t.item_id), votes:DB.votes.filter(v => v.item_id === t.item_id)})).filter(x => x.it)
+  return DB.together.map(t => ({t, it:item(t.item_id), votes:DB.votes.filter(v => v.item_id === t.item_id)})).filter(x => vis(x.it))
     .sort((a, b) => b.votes.length - a.votes.length || String(a.t.created_at).localeCompare(String(b.t.created_at)));
 }
 function togetherBtn(id) {
+  if (isPriv(item(id))) return '';
   const on = DB.together.some(t => t.item_id === id);
   return `<div style="margin-top:12px"><button class="btn ${on ? 'grey' : 'white'} sm" onclick="${on ? 'openTogether()' : `propose('${id}')`}">🍿 ${on ? 'Propuesta para ver juntos · ver votos' : 'Proponer para ver juntos'}</button></div>`;
 }
@@ -1369,9 +1396,12 @@ async function watchedTogether(id) {
   openItem(id);
 }
 function openTogether() { openHTML(togetherHTML); }
+const TG_TABS = [['all','Todo'],['movie','🎬 Pelis'],['series','📺 Series'],['book','📖 Libros'],['other','🎲 Otros']];
 function togetherHTML() {
-  const L = togetherList();
-  return `<button class="x" onclick="closeModal()">✕</button><div class="mh"><h2>🍿 Ver juntos</h2><div class="small muted">Votad qué toca. Se proponen títulos desde su ficha.</div></div><div class="pad">
+  const ALL = togetherList(), tt = ui.tg || 'all';
+  const L = ALL.filter(x => tt === 'all' || (tt === 'other' ? !['movie','series','book'].includes(x.it.type) : x.it.type === tt));
+  return `<button class="x" onclick="closeModal()">✕</button><div class="mh"><h2>🍿 Ver juntos</h2><div class="small muted">Votad qué toca. Se proponen títulos desde su ficha.</div></div>
+  <div class="chips" style="padding-top:0;padding-bottom:8px">${TG_TABS.map(([k, l]) => { const n = k === 'all' ? ALL.length : ALL.filter(x => k === 'other' ? !['movie','series','book'].includes(x.it.type) : x.it.type === k).length; return chip(l + (n ? ' · ' + n : ''), tt === k, `ui.tg='${k}';renderModal()`); }).join('')}</div><div class="pad">
   ${L.map((x, i) => { const mine = x.votes.some(v => v.member_id === me), win = i === 0 && x.votes.length;
     return `<div class="tg ${win ? 'win' : ''}"><div class="thumb ${TYPES[x.it.type].sq ? 'sq' : ''}" onclick="openItem('${x.it.id}')">${art(x.it)}</div>
     <div style="flex:1;min-width:0"><b onclick="openItem('${x.it.id}')">${win ? '👑 ' : ''}${esc(x.it.title)}</b><div class="sub">${metaLine(x.it)}${extraTxt(x.it) ? ' · ' + extraTxt(x.it) : ''}</div>
@@ -1379,7 +1409,7 @@ function togetherHTML() {
     <div class="tg-b"><button class="btn ${mine ? 'white' : 'red'} sm" onclick="vote('${x.it.id}')">${mine ? '✓ Me apunto' : '👍 Me apunto'}</button><button class="btn grey sm" onclick="watchedTogether('${x.it.id}')">✅ La vimos</button><button class="btn grey sm" onclick="unpropose('${x.it.id}')" aria-label="Quitar">✕</button></div></div></div>`; }).join('') || empty('🍿', 'No hay nada propuesto', 'Abre la ficha de una peli o serie y pulsa «Proponer para ver juntos».')}
   ${L.length > 1 ? `<button class="btn grey full" onclick="spinTogether()">🎲 Que decida el azar entre los más votados</button>` : ''}</div>`;
 }
-function spinTogether() { const L = togetherList(); if (!L.length) return; const max = L[0].votes.length; const top = L.filter(x => x.votes.length === max); const x = top[Math.floor(Math.random() * top.length)]; toast(`🎲 Toca: ${x.it.title}`); setTimeout(() => openItem(x.it.id), 900); }
+function spinTogether() { const tt = ui.tg || 'all'; const L = togetherList().filter(x => tt === 'all' || (tt === 'other' ? !['movie','series','book'].includes(x.it.type) : x.it.type === tt)); if (!L.length) return; const max = L[0].votes.length; const top = L.filter(x => x.votes.length === max); const x = top[Math.floor(Math.random() * top.length)]; toast(`🎲 Toca: ${x.it.title}`); setTimeout(() => openItem(x.it.id), 900); }
 
 /* ---------- RESUMEN ANUAL ---------- */
 let wrap = null;
@@ -1479,6 +1509,30 @@ function onScan(code) {
   if (!['book','audiobook'].includes(add.type)) add.type = 'book';
   view = 'add'; renderView(); doSearch('isbn:' + code);
 }
+
+
+/* ---------- PRIVACIDAD ---------- */
+function privHTML(it) {
+  if (it.created_by !== me) return isPriv(it) ? `<div class="privbox small muted">🔒 ${esc(member(it.created_by).name)} lo tiene como privado. Tú lo ves porque también está en tu biblioteca.</div>` : '';
+  const others = DB.statuses.filter(s => s.item_id === it.id && s.member_id !== me && s.status).length;
+  return `<div class="privbox"><label class="tog"><input type="checkbox" ${isPriv(it) ? 'checked' : ''} onchange="setPrivate('${it.id}',this.checked)"> 🔒 Privado: solo lo ves tú</label>${others ? `<div class="small muted" style="margin-top:6px">${others === 1 ? 'Otra persona lo tiene' : others + ' personas lo tienen'} en su biblioteca y lo seguirá${others === 1 ? '' : 'n'} viendo.</div>` : ''}</div>`;
+}
+async function setPrivate(id, v) {
+  const it = item(id); if (!it) return;
+  await put('items', {id, extra:{...(it.extra || {}), private:v}});
+  if (v) { const t = DB.together.find(x => x.item_id === id); if (t) { for (const x of DB.votes.filter(z => z.item_id === id)) await del('votes', x.id); await del('together', id); } }
+  toast(v ? '🔒 Ahora es privado' : '👥 Ahora lo ve todo el grupo');
+}
+function lbMine() { return DB.items.filter(i => i.created_by === me && i.extra && 'lb' in i.extra); }
+function lbPrivHTML() {
+  const L = lbMine(), p = L.filter(isPriv).length;
+  return `<button class="x" onclick="closeModal()">✕</button><div class="mh"><h2>🔒 Mis pelis de Letterboxd</h2></div><div class="pad">
+  <p style="color:var(--tx2);line-height:1.6">Importaste <b>${L.length}</b> películas desde Letterboxd. Ahora mismo <b>${p}</b> son privadas y <b>${L.length - p}</b> las ve todo el grupo.</p>
+  <button class="btn red full" onclick="lbPrivacy(true)">🔒 Hacerlas todas privadas</button>
+  <button class="btn grey full" onclick="lbPrivacy(false)">👥 Hacerlas todas públicas</button>
+  <p class="small muted" style="margin-top:14px;line-height:1.5">Las que otra persona del grupo también tenga en su biblioteca las seguirá viendo. Se puede cambiar una a una desde su ficha.</p></div>`;
+}
+async function lbPrivacy(v) { const L = lbMine().map(i => ({...i, extra:{...i.extra, private:v}})); await putMany('items', L, true); closeModal(); toast(v ? `🔒 ${L.length} pelis ahora son privadas` : `👥 ${L.length} pelis ahora las ve el grupo`); }
 
 /* ---------- PERFILES / LOGIN ---------- */
 function renderProfiles() {
